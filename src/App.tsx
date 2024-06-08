@@ -9,6 +9,7 @@ import DefaultLayout from './layouts/DefaultLayout';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
+// import NotFoundPage from './pages/NotFoundPage'; // TODO
 
 function App() {
   const router = createBrowserRouter(
@@ -17,7 +18,7 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="products/:id" element={<ProductPage />} />
-        {/* <Route path="*" element={<p>Page not found</p>} /> // TODO */}
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>
     )
   );

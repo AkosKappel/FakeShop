@@ -9,8 +9,9 @@ export default {
       fontFamily: {
         'sans': ['Roboto', 'sans-serif'],
       },
-      gridTemplateColumns: {
-        '70/30': '70% 28%',
+      height: {
+        '1/3-screen': '33vh',
+        '1/2-screen': '50vh',
       },
     },
   },
