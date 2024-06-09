@@ -3,21 +3,13 @@ import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import ModalImage from './ModalImage';
 import { Product } from '../types/Product.interface';
-import { randomNumber, calculateOriginalPrice } from '../utils/helpers';
+import { formatPrice } from '../utils/helpers';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  // Simulate a discount between 10% and 35% on 30% of products
-  const [fullPrice, setFullPrice] = useState<number>(
-    calculateOriginalPrice(
-      product.price,
-      Math.random() < 0.3 ? Math.round(randomNumber(10, 35)) : 0
-    )
-  );
-
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,13 +48,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </h2>
           <div className="flex items-center mt-2">
             <span className="text-gray-700 font-semibold">Price:</span>
-            {fullPrice !== product.price && (
+            {product.fullPrice !== product.price && (
               <span className="text-gray-700 ml-2 line-through">
-                ${fullPrice.toFixed(2)}
+                ${formatPrice(product.fullPrice)}
               </span>
             )}
             <span className="text-gray-800 font-bold ml-2 text-xl">
-              ${product.price.toFixed(2)}
+              ${formatPrice(product.price)}
             </span>
             <button
               className="ml-auto bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-pink-600"

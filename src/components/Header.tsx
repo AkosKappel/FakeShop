@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
+import { titleCase } from '../utils/helpers';
 
 const Header = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -45,7 +46,7 @@ const Header = () => {
             to={`/products/category/${category}`}
             className={activeLinkClass}
           >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
+            {titleCase(category)}
           </NavLink>
         ))}
       </div>

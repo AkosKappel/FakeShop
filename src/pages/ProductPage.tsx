@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { FaPlus, FaMinus, FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import { Helmet } from 'react-helmet';
 import { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
-import { FaPlus, FaMinus, FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import { titleCase, formatRating } from '../utils/helpers';
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +41,9 @@ const ProductPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{product?.title || 'FakeShop'}</title>
+      </Helmet>
       {loading || !product ? (
         <Spinner description="Loading product" loading={loading} />
       ) : (
@@ -59,8 +64,7 @@ const ProductPage = () => {
               <span className="text-gray-600">Category:</span>
               <Link to={`/products/category/${product.category}`}>
                 <p className="text-gray-800 ml-2 font-semibold hover:text-pink-400">
-                  {product.category[0].toUpperCase() +
-                    product.category.slice(1)}
+                  {titleCase(product.category)}
                 </p>
               </Link>
             </div>
@@ -84,8 +88,7 @@ const ProductPage = () => {
                   ))}
                 </div>
                 <span className="text-gray-600 ml-2">
-                  {product.rating.rate.toFixed(1)} ({product.rating.count}{' '}
-                  reviews)
+                  {formatRating(product.rating.rate, product.rating.count)}
                 </span>
               </div>
 

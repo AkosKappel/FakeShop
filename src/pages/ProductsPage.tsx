@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
 import ProductCard from '../components/ProductCard';
+import {
+  titleCase,
+  calculateOriginalPrice,
+  randomNumber,
+} from '../utils/helpers';
 
 interface ProductsPageProps {
   title?: string;
@@ -12,7 +18,7 @@ interface ProductsPageProps {
 const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [page, setPage] = useState<number>(1); TODO
+  // const [page, setPage] = useState<number>(1); TODO: Implement pagination
   const { category } = useParams<{ category: string }>();
 
   useEffect(() => {
@@ -23,7 +29,16 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
           : '/api/products';
         const response = await fetch(apiUrl + `?limit=${numberOfProducts}`);
         const data = await response.json();
-        data.sort(() => Math.random() - 0.5); // Shuffle the products
+
+        // Simulate a discount between 10% and 35% on 30% of products
+        data.forEach((product: Product) => {
+          const discount =
+            Math.random() < 0.3 ? Math.round(randomNumber(10, 35)) : 0;
+          product.fullPrice = calculateOriginalPrice(product.price, discount);
+        });
+
+        // Shuffle the products
+        data.sort(() => Math.random() - 0.5);
         setProducts(data);
       } catch (error) {
         console.error(error);
@@ -37,6 +52,9 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
 
   return (
     <div>
+      <Helmet>
+        <title>{titleCase(category) || title || 'Products'} | FakeShop</title>
+      </Helmet>
       {loading ? (
         <Spinner description="Loading products" loading={loading} />
       ) : (
