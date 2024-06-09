@@ -24,9 +24,13 @@ function App() {
         />
         <Route path="products/:id" element={<ProductPage />} />
         <Route path="products/category/:category" element={<ProductsPage />} />
+        <Route path="cart" element={<HomePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
-    )
+    ),
+    {
+      basename: '/FakeShop',
+    }
   );
 
   return <RouterProvider router={router} />;

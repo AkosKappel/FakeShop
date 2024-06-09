@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/FakeShop/',
+  base: '/FakeShop',
   plugins: [react()],
   server: {
     // this part doesn't work on GitHub Pages because it must be a static site
@@ -19,6 +19,7 @@ export default defineConfig({
   define: {
     'process.env': {
       API_URL: 'https://fakestoreapi.com',
+      BASE_URL: '/FakeShop',
     },
   },
 });
