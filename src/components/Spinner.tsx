@@ -1,7 +1,12 @@
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useEffect, useState } from 'react';
 
-const Spinner = ({ loading = true, description = '' }) => {
+interface SpinnerProps {
+  loading: boolean;
+  description?: string;
+}
+
+const Spinner = ({ loading, description }: SpinnerProps) => {
   const [dots, setDots] = useState('');
 
   useEffect(() => {

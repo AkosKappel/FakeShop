@@ -5,24 +5,24 @@ import { FaShoppingCart } from 'react-icons/fa';
 const Header = () => {
   const [categories, setCategories] = useState<string[]>([]);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/products/categories');
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/products/categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchCategories();
   }, []);
 
   const activeLinkClass = ({ isActive }: { isActive: boolean }) =>
     isActive
-      ? 'underline-effect text-pink-300 font-bold'
-      : 'underline-effect text-gray-300 font-semibold';
+      ? 'underline-effect text-pink-300 hover:text-pink-500 font-bold'
+      : 'underline-effect text-gray-300 hover:text-pink-500 font-semibold';
 
   return (
     <header className="flex justify-between items-center p-4 min-h-20 bg-slate-900 shadow-md">

@@ -18,7 +18,7 @@ function App() {
     createRoutesFromElements(
       <Route element={<DefaultLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="products" element={<ProductsPage />} />
+        <Route path="products" element={<ProductsPage title='Best Sellers'/>} />
         <Route path="products/:id" element={<ProductPage />} />
         <Route path="products/category/:category" element={<ProductsPage />} />
         <Route path="*" element={<NotFoundPage />} />
