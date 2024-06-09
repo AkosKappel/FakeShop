@@ -45,9 +45,9 @@ const Carousel = ({
   };
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto mt-3">
+    <div className="relative w-full max-w-6xl mx-auto mt-4">
       {title && (
-        <h2 className="text-3xl font-semibold text-center mb-4">{title}</h2>
+        <h2 className="text-3xl font-semibold text-center my-3">{title}</h2>
       )}
       <div className="overflow-hidden relative h-64">
         <div
@@ -86,18 +86,22 @@ const Carousel = ({
           ))}
         </div>
       </div>
-      <button
-        onClick={handlePrevClick}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-slate-900 text-white p-3 rounded-full focus:outline-none hover:bg-pink-600"
-      >
-        <FaArrowLeft />
-      </button>
-      <button
-        onClick={handleNextClick}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-slate-900 text-white p-3 rounded-full focus:outline-none hover:bg-pink-600"
-      >
-        <FaArrowRight />
-      </button>
+      {products.length > itemsPerView && (
+        <button
+          onClick={handlePrevClick}
+          className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-slate-900 text-white p-3 rounded-full focus:outline-none hover:bg-pink-600"
+        >
+          <FaArrowLeft />
+        </button>
+      )}
+      {products.length > itemsPerView && (
+        <button
+          onClick={handleNextClick}
+          className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-slate-900 text-white p-3 rounded-full focus:outline-none hover:bg-pink-600"
+        >
+          <FaArrowRight />
+        </button>
+      )}
     </div>
   );
 };
