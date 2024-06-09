@@ -9,7 +9,8 @@ const Header = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/products/categories');
+        const api = process.env.API_URL;
+        const response = await fetch(`${api}/products/categories`);
         const data = await response.json();
         setCategories(data);
       } catch (error) {

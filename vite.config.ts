@@ -6,6 +6,7 @@ export default defineConfig({
   base: '/FakeShop/',
   plugins: [react()],
   server: {
+    // this part doesn't work on GitHub Pages because it must be a static site
     port: 3000,
     proxy: {
       '/api': {
@@ -13,6 +14,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+    },
+  },
+  define: {
+    'process.env': {
+      API_URL: 'https://fakestoreapi.com',
     },
   },
 });

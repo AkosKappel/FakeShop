@@ -24,10 +24,13 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
   useEffect(() => {
     const fetchProducts = async (category?: string) => {
       try {
-        const apiUrl = category
-          ? `/api/products/category/${category}`
-          : '/api/products';
-        const response = await fetch(apiUrl + `?limit=${numberOfProducts}`);
+        const api =
+          process.env.API_URL +
+          '/products' +
+          (category ? `/category/${category}` : '') +
+          `?limit=${numberOfProducts}`;
+
+        const response = await fetch(api);
         const data = await response.json();
 
         // Simulate a discount between 10% and 35% on 30% of products

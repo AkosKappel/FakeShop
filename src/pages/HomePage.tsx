@@ -13,7 +13,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/products?limit=10');
+        const api = process.env.API_URL;
+        const response = await fetch(`${api}/products?limit=10`);
         const data = await response.json();
         setBestSellers(data);
       } catch (error) {
