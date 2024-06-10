@@ -58,6 +58,9 @@ const Header = () => {
         <NavLink to="/products" className={activeLinkClass}>
           Products
         </NavLink>
+        <NavLink to="/about" className={activeLinkClass}>
+          About
+        </NavLink>
         <NavLink to="/cart" className={activeLinkClass}>
           <FaShoppingCart className="inline-block ml-2 text-3xl" />
           {cart.totalQuantity > 0 && (

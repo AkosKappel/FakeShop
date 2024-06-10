@@ -2,20 +2,20 @@ interface HeroProps {
   title: string;
   subtitle: string;
   backgroundImage: string;
-  ctaText: string;
-  onCtaClick: () => void;
+  text: string;
+  onClick: () => void;
 }
 
 const Hero: React.FC<HeroProps> = ({
   title,
   subtitle,
   backgroundImage,
-  ctaText,
-  onCtaClick,
+  text,
+  onClick,
 }) => {
   return (
     <div
-      className="my-6 flex items-center justify-center text-white text-center bg-cover bg-center bg-no-repeat h-96 relative"
+      className="m-6 relative flex items-center justify-center text-white text-center bg-cover bg-center bg-no-repeat h-96 rounded-lg overflow-hidden shadow-lg w-fit sm:w-3/4 lg:w-full"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -26,9 +26,9 @@ const Hero: React.FC<HeroProps> = ({
         <p className="text-xl mb-6">{subtitle}</p>
         <button
           className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded"
-          onClick={onCtaClick}
+          onClick={onClick}
         >
-          {ctaText}
+          {text}
         </button>
       </div>
     </div>

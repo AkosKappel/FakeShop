@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ProductsPage from './ProductsPage';
 import Carousel from '../components/Carousel';
 import Spinner from '../components/Spinner';
 import Hero from '../components/Hero';
 import { Product } from '../types/Product.interface';
+import heroBg from '../assets/hero-bg.jpg';
 
 const HomePage = () => {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async (count: number) => {
@@ -38,22 +41,18 @@ const HomePage = () => {
     );
   }, [bestSellers]);
 
-  const handleCtaClick = () => {
-    console.log('CTA Clicked!'); // TODO: Add about page
-  };
-
   return (
-    <div className="flex items-center justify-center flex-col">
+    <div>
       {loading ? (
         <Spinner loading={loading} />
       ) : (
-        <div>
+        <div className="flex items-center justify-center flex-col">
           <Hero
             title="Welcome to FakeShop"
             subtitle="Explore our products and services."
-            backgroundImage="https://t3.ftcdn.net/jpg/02/84/32/52/360_F_284325273_ei2pxwlAyg4ghLOBINFPiF1LVubbfLpA.jpg"
-            ctaText="Learn More"
-            onCtaClick={handleCtaClick}
+            backgroundImage={heroBg}
+            text="Learn More"
+            onClick={() => navigate('/about')}
           />
           <div className="h-4" />
           <Carousel products={bestSellers} title="Best Sellers" />

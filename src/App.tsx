@@ -8,6 +8,7 @@ import {
 import './App.css';
 import DefaultLayout from './layouts/DefaultLayout';
 import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
@@ -20,6 +21,7 @@ function App() {
     createRoutesFromElements(
       <Route element={<DefaultLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="about" element={<AboutPage />} />
         <Route
           path="products"
           element={<ProductsPage title="All Products" />}
