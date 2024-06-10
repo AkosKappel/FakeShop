@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const CheckoutPage = () => {
+  // TODO: finish form and add validation
   return (
     <>
       <form
@@ -70,6 +71,16 @@ const CheckoutPage = () => {
           <div className="h-4" />
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
+              Card Type
+            </label>
+            <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm rounded-md">
+              <option>Visa</option>
+              <option>Mastercard</option>
+              <option>American Express</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
               Card Number
             </label>
             <input
@@ -95,15 +106,15 @@ const CheckoutPage = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
-          <h2 className="text-2xl font-bold">Delivery Method</h2>
+          <h2 className="text-2xl font-bold mt-12">Delivery Method</h2>
           <div className="h-4" />
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Shipping Method
             </label>
             <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm rounded-md">
-              <option>Standard</option>
-              <option>Express</option>
+              <option>Standard (3-5 days)</option>
+              <option>Express (1-2 days)</option>
             </select>
           </div>
         </section>
@@ -121,6 +132,7 @@ const CheckoutPage = () => {
           state={{
             shippingAddress: '1234 Fake St, Springfield, IL 62701',
             paymentMethod: 'Visa',
+            deliveryMethod: 'Standard (3-5 days)',
           }}
         >
           Continue

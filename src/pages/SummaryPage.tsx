@@ -8,7 +8,8 @@ const SummaryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { shippingAddress, paymentMethod } = location.state || {};
+  const { shippingAddress, paymentMethod, deliveryMethod } =
+    location.state || {};
 
   const handlePlaceOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,6 +48,11 @@ const SummaryPage = () => {
         <section className="text-lg">
           <h2 className="font-bold">Payment</h2>
           <p>{paymentMethod}</p>
+        </section>
+
+        <section className="text-lg">
+          <h2 className="font-bold">Delivery</h2>
+          <p>{deliveryMethod}</p>
         </section>
 
         <section className="flex justify-between text-lg font-bold">
