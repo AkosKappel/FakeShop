@@ -7,7 +7,7 @@ const DefaultLayout = () => {
   return (
     <div className="bg-slate-200">
       <Header />
-      <div className="container mx-auto p-4 min-h-screen">
+      <div className="container mx-auto min-h-screen max-w-7xl">
         <Outlet />
       </div>
       <Footer />

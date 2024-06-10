@@ -4,7 +4,8 @@ import { FaSearch } from 'react-icons/fa';
 
 import ModalImage from './ModalImage';
 import { Product } from '../types/Product.interface';
-import { formatPrice } from '../utils/helpers';
+import { formatPrice, truncate } from '../utils/helpers';
+import { useCart } from '../hooks/CartHooks';
 
 interface ProductCardProps {
   product: Product;
@@ -13,13 +14,13 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { addToCart } = useCart();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleAddToCart = () => {
-    // TODO: Add product to cart
-    console.log('Product added to cart:', product);
+    addToCart({ ...product, quantity: 1 });
   };
 
   return (
@@ -44,21 +45,27 @@ const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
         <div className="p-4">
-          <h2 className="text-gray-800 text-2xl font-semibold hover:text-pink-500">
-            <Link to={`/products/${product.id}`}>{product.title}</Link>
-          </h2>
-          <div className="flex items-center mt-2">
-            <span className="text-gray-700 font-semibold">Price:</span>
-            {product.fullPrice !== product.price && (
-              <span className="text-gray-700 ml-2 line-through">
-                ${formatPrice(product.fullPrice)}
-              </span>
-            )}
-            <span className="text-gray-800 font-bold ml-2 text-xl">
-              ${formatPrice(product.price)}
-            </span>
+          <Link to={`/products/${product.id}`}>
+            <h2 className="text-gray-800 text-2xl font-semibold hover:text-pink-500">
+              {truncate(product.title, 50)}
+            </h2>
+          </Link>
+          <div className="flex items-center mt-3">
+            <Link to={`/products/${product.id}`}>
+              <div className="flex items-center flex-wrap">
+                <span className="text-gray-700 font-semibold">Price:</span>
+                {product.fullPrice !== product.price && (
+                  <span className="text-gray-700 ml-2 line-through">
+                    ${formatPrice(product.fullPrice)}
+                  </span>
+                )}
+                <span className="text-gray-800 font-bold ml-2 text-xl">
+                  ${formatPrice(product.price)}
+                </span>
+              </div>
+            </Link>
             <button
-              className="ml-auto bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-pink-600"
+              className="ml-auto bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-pink-600 min-h-12 min-w-fit"
               onClick={handleAddToCart}
             >
               Add to Cart

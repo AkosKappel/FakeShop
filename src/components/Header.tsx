@@ -3,9 +3,11 @@ import { Link, NavLink } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 
 import { titleCase } from '../utils/helpers';
+import { useCart } from '../hooks/CartHooks';
 
 const Header = () => {
   const [categories, setCategories] = useState<string[]>([]);
+  const { cart } = useCart();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -57,7 +59,12 @@ const Header = () => {
           Products
         </NavLink>
         <NavLink to="/cart" className={activeLinkClass}>
-          Cart
+          <FaShoppingCart className="inline-block ml-2 text-3xl" />
+          {cart.totalQuantity > 0 && (
+            <span className="ml-1 text-sm font-bold">
+              ({cart.totalQuantity})
+            </span>
+          )}
         </NavLink>
       </div>
     </header>
