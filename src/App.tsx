@@ -12,11 +12,10 @@ import AboutPage from './pages/AboutPage';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
-  // TODO 404 page: You can provide a way better UX than this when your app throws errors by providing your own ErrorBoundary or errorElement prop on your route.
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<DefaultLayout />}>
@@ -29,6 +28,7 @@ function App() {
         <Route path="products/:id" element={<ProductPage />} />
         <Route path="products/category/:category" element={<ProductsPage />} />
         <Route path="cart" element={<CartPage />} />
+        <Route path="checkout" element={<CheckoutPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     ),
