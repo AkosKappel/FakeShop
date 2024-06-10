@@ -4,6 +4,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 
 import { titleCase } from '../utils/helpers';
 import { useCart } from '../hooks/CartHooks';
+import { formatPrice } from '../utils/helpers';
 
 const Header = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -64,9 +65,12 @@ const Header = () => {
         <NavLink to="/cart" className={activeLinkClass}>
           <FaShoppingCart className="inline-block ml-2 text-3xl" />
           {cart.totalQuantity > 0 && (
-            <span className="ml-1 text-sm font-bold">
-              ({cart.totalQuantity})
-            </span>
+            <div className="inline-block min-w-20 text-sm">
+              <span className="ml-1 font-bold">
+                {formatPrice(cart.totalPrice)}
+              </span>
+              <span className="ml-1 font-bold">({cart.totalQuantity})</span>
+            </div>
           )}
         </NavLink>
       </div>

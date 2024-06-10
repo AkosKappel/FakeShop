@@ -56,9 +56,8 @@ const HomePage = () => {
           />
           <div className="h-4" />
           <Carousel products={bestSellers} title="Best Sellers" />
-          <div className="h-8" />
+          <div className="h-16" />
           <ProductsPage title="Recommended for You" numberOfProducts={4} />
-          <div className="h-8" />
           <Carousel products={newArrivals} title="New Arrivals" />
           <div className="h-16" />
         </div>

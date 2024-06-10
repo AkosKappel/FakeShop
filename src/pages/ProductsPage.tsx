@@ -75,6 +75,7 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
           </div>
         </div>
       )}
+      <div className="h-16" />
     </div>
   );
 };

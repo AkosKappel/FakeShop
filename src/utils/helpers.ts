@@ -10,7 +10,10 @@ export const calculateOriginalPrice = (
 
 export const formatPrice = (price?: number): string => {
   if (!price) return '';
-  return price.toFixed(2);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(price);
 };
 
 export const formatRating = (rate: number, count: number): string => {

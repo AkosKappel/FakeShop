@@ -78,7 +78,7 @@ const Carousel = ({
                       {limitWords(product.title, 4)}
                     </h3>
                     <p className="text-gray-600 text-sm p-1">
-                      ${formatPrice(product.price)}
+                      {formatPrice(product.price)}
                     </p>
                   </div>
                 </Link>
