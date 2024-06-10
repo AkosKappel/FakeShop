@@ -1,4 +1,4 @@
-import { createContext, useReducer, ReactNode } from 'react';
+import { createContext, useReducer, ReactNode, useEffect } from 'react';
 import {
   CartItem,
   CartState,
@@ -77,6 +77,9 @@ const cartReducer = (cart: CartState, action: CartAction): CartState => {
     case 'CLEAR_CART':
       return initialCart;
 
+    case 'LOAD_CART':
+      return action.payload;
+
     default:
       return cart;
   }
@@ -84,6 +87,18 @@ const cartReducer = (cart: CartState, action: CartAction): CartState => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, dispatch] = useReducer(cartReducer, initialCart);
+
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      const parsedCart = JSON.parse(storedCart);
+      dispatch({ type: 'LOAD_CART', payload: parsedCart });
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (item: CartItem) => {
     dispatch({
