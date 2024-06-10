@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaPlus, FaMinus, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
+
 import { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
 import { titleCase, formatRating } from '../utils/helpers';

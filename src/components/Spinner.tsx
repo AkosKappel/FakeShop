@@ -1,5 +1,5 @@
-import ClipLoader from 'react-spinners/ClipLoader';
 import { useEffect, useState } from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 interface SpinnerProps {
   loading: boolean;

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+
+import ProductsPage from './ProductsPage';
 import Carousel from '../components/Carousel';
 import Spinner from '../components/Spinner';
 import Hero from '../components/Hero';
-import ProductsPage from './ProductsPage';
 import { Product } from '../types/Product.interface';
 
 const HomePage = () => {
@@ -11,10 +12,10 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async (count: number) => {
       try {
         const api = process.env.API_URL;
-        const response = await fetch(`${api}/products?limit=10`);
+        const response = await fetch(`${api}/products?limit=${count}`);
         const data = await response.json();
         setBestSellers(data);
       } catch (error) {
@@ -24,7 +25,7 @@ const HomePage = () => {
       }
     };
 
-    fetchProducts();
+    fetchProducts(10);
   }, []);
 
   useEffect(() => {

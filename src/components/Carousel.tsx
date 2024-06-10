@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
 import { Product } from '../types/Product.interface';
 import { limitWords, formatPrice } from '../utils/helpers';
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+
 import { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
 import ProductCard from '../components/ProductCard';

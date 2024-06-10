@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
+
 import ModalImage from './ModalImage';
 import { Product } from '../types/Product.interface';
 import { formatPrice } from '../utils/helpers';

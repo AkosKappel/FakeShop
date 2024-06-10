@@ -1,14 +1,16 @@
-import './App.css';
 import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom';
+
+import './App.css';
 import DefaultLayout from './layouts/DefaultLayout';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
+import CartPage from './pages/CartPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -24,7 +26,7 @@ function App() {
         />
         <Route path="products/:id" element={<ProductPage />} />
         <Route path="products/category/:category" element={<ProductsPage />} />
-        <Route path="cart" element={<HomePage />} />
+        <Route path="cart" element={<CartPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     ),
