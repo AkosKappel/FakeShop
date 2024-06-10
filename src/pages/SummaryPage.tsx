@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import { useCart } from '../hooks/CartHooks';
 import { formatPrice } from '../utils/helpers';
@@ -6,8 +6,11 @@ import { formatPrice } from '../utils/helpers';
 const SummaryPage = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handlePlaceOrder = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const { shippingAddress, paymentMethod } = location.state || {};
+
+  const handlePlaceOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     alert('Order placed!');
     navigate('/home');
@@ -38,12 +41,12 @@ const SummaryPage = () => {
 
         <section className="text-lg">
           <h2 className="font-bold">Shipping</h2>
-          <p>Free Shipping</p>
+          <p>{shippingAddress}</p>
         </section>
 
         <section className="text-lg">
           <h2 className="font-bold">Payment</h2>
-          <p>PayPal</p>
+          <p>{paymentMethod}</p>
         </section>
 
         <section className="flex justify-between text-lg font-bold">
@@ -58,13 +61,12 @@ const SummaryPage = () => {
           >
             Back to Checkout
           </Link>
-          <Link
-            to="/checkout/summary"
+          <button
             className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded"
             onClick={handlePlaceOrder}
           >
             Place Order
-          </Link>
+          </button>
         </section>
       </div>
     </div>
