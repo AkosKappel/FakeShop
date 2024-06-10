@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { FaPlus, FaMinus, FaRegTrashAlt } from 'react-icons/fa';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
+import QuantityPicker from '../components/QuantityPicker';
 import { useCart } from '../hooks/CartHooks';
 import { CartItem } from '../types/Cart.interface';
 import { formatPrice } from '../utils/helpers';
@@ -65,42 +66,36 @@ const CartPage = () => {
                 key={item.id}
                 className="flex justify-between items-center bg-white p-4 rounded-md shadow-md min-h-36 sm:flex-row flex-col"
               >
-                <div className="flex items-center">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-32 h-32 object-contain rounded-md"
-                  />
-                  <div className="ml-4 max-w-xs lg:max-w-xl">
-                    <h2 className="text-lg font-semibold wrap">{item.title}</h2>
-                    <p className="text-gray-600">{formatPrice(item.price)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between md:w-1/3 space-x-3 mt-3 mx-2">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => handleDecreaseQuantity(item)}
-                      className="rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 px-2 py-2"
-                    >
-                      <FaMinus />
-                    </button>
-                    <span className="mx-4">{item.quantity}</span>
-                    <button
-                      onClick={() => handleIncreaseQuantity(item)}
-                      className="rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 px-2 py-2"
-                    >
-                      <FaPlus />
-                    </button>
-                    <FaRegTrashAlt
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => removeFromCart(item.id, item.quantity)}
+                <Link to={`/products/${item.id}`}>
+                  <div className="flex items-center">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-32 h-32 object-contain rounded-md"
                     />
+                    <div className="ml-4 max-w-xs lg:max-w-xl">
+                      <h2 className="text-lg font-semibold wrap">
+                        {item.title}
+                      </h2>
+                      <p className="text-gray-600">{formatPrice(item.price)}</p>
+                    </div>
                   </div>
+                </Link>
+                <div className="flex items-center justify-between space-x-3 mt-3 mx-2 md:w-1/3 sm:w-2/3 w-4/5">
+                  <QuantityPicker
+                    quantity={item.quantity}
+                    onIncrement={() => handleIncreaseQuantity(item)}
+                    onDecrement={() => handleDecreaseQuantity(item)}
+                  />
                   <div className="text-right">
                     <p className="text-lg font-semibold">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
+                  <FaRegTrashAlt
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => removeFromCart(item.id, item.quantity)}
+                  />
                 </div>
               </div>
             ))}

@@ -40,9 +40,6 @@ const ProductPage = () => {
   const handleDecrement = () =>
     setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setQuantity(+e.target.value);
-
   const handleAddButton = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -96,9 +93,10 @@ const ProductPage = () => {
             <div className="flex justify-between items-center my-4">
               <QuantityPicker
                 quantity={quantity}
-                setQuantity={handleQuantityChange}
+                setQuantity={(e) => setQuantity(+e.target.value)}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
+                editable={true}
               />
               <button
                 className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700"
