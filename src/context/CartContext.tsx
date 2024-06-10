@@ -1,4 +1,4 @@
-import { createContext, useReducer, useContext, ReactNode } from 'react';
+import { createContext, useReducer, ReactNode } from 'react';
 import {
   CartItem,
   CartState,
@@ -12,7 +12,7 @@ const initialCart: CartState = {
   totalQuantity: 0,
 };
 
-const CartContext = createContext<CartContextProps>({
+export const CartContext = createContext<CartContextProps>({
   cart: initialCart,
   dispatch: () => null,
   addToCart: () => {},
@@ -117,5 +117,3 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);
