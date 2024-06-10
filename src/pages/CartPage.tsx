@@ -91,7 +91,10 @@ const CartPage = () => {
                     >
                       <FaPlus />
                     </button>
-                    <FaRegTrashAlt className="text-red-500 cursor-pointer" />
+                    <FaRegTrashAlt
+                      className="text-red-500 cursor-pointer"
+                      onClick={() => removeFromCart(item.id, item.quantity)}
+                    />
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-semibold">
