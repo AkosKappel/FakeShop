@@ -128,7 +128,7 @@ const CheckoutPage = () => {
         </Link>
         <Link
           to="/checkout/summary"
-          className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
+          className="bg-pink-700 hover:bg-pink-800 text-white font-bold py-2 px-4 rounded"
           state={{
             shippingAddress: '1234 Fake St, Springfield, IL 62701',
             paymentMethod: 'Visa',

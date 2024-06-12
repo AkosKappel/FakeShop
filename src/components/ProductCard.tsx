@@ -46,7 +46,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
         <div className="p-4">
           <Link to={`/products/${product.id}`}>
-            <h2 className="text-gray-800 text-2xl font-semibold hover:text-pink-500">
+            <h2
+              className="text-gray-800 text-2xl font-semibold hover:text-pink-500"
+              title={product.title}
+            >
               {truncate(product.title, 50)}
             </h2>
           </Link>
