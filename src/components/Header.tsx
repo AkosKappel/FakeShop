@@ -44,7 +44,7 @@ const Header = () => {
           </p>
         </Link>
       </div>
-      <div className="flex space-x-4 mx-4">
+      <div className="hidden lg:flex items-center space-x-4 mx-4">
         {categories.map((category) => (
           <NavLink
             key={category}
@@ -55,7 +55,7 @@ const Header = () => {
           </NavLink>
         ))}
       </div>
-      <div className="text-gray-300 text-xl font-semibold flex-nowrap flex space-x-8 mx-4">
+      <div className="hidden sm:flex flex-nowrap space-x-8 mx-4 text-gray-300 text-xl font-semibold">
         <NavLink to="/products" className={activeLinkClass}>
           Products
         </NavLink>
