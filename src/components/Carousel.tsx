@@ -50,7 +50,7 @@ const Carousel = ({
       {title && (
         <h2 className="text-3xl font-semibold text-center my-3">{title}</h2>
       )}
-      <div className="overflow-hidden relative h-64">
+      <div className="overflow-hidden relative lg:h-64">
         <div
           className="flex transition-transform duration-300"
           style={{
@@ -73,11 +73,11 @@ const Carousel = ({
                   />
                 </div>
                 <Link to={`/products/${product.id}`}>
-                  <div className="flex justify-between items-center p-4">
+                  <div className="flex flex-col md:flex-row justify-between items-center p-4">
                     <h3 className="text-gray-800 text-xl font-semibold hover:text-pink-600">
                       {limitWords(product.title, 4)}
                     </h3>
-                    <p className="text-gray-600 text-sm p-1">
+                    <p className="text-gray-600 text-lg m-1">
                       {formatPrice(product.price)}
                     </p>
                   </div>
