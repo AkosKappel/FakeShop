@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "murmurhash-js": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
@@ -21,6 +22,7 @@
     "react-spinners": "^0.13.8"
   },
   "devDependencies": {
+    "@types/murmurhash-js": "^1.0.6",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-helmet": "^6.1.11",

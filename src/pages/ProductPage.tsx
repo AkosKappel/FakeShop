@@ -6,8 +6,9 @@ import Spinner from '../components/Spinner';
 import QuantityPicker from '../components/QuantityPicker';
 import StarsRating from '../components/StarsRating';
 import { Product } from '../types/Product.interface';
-import { titleCase } from '../utils/helpers';
+import { formatPrice, titleCase } from '../utils/helpers';
 import { useCart } from '../hooks/CartHooks';
+import { fetchProduct } from '../utils/dataFetch';
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,11 +20,10 @@ const ProductPage = () => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductById = async () => {
       try {
-        const api = process.env.API_URL;
-        const response = await fetch(`${api}/products/${id}`);
-        const data = await response.json();
+        setLoading(true);
+        const data = await fetchProduct(id);
         setProduct(data);
       } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ const ProductPage = () => {
       }
     };
 
-    fetchProduct();
+    fetchProductById();
   }, [id]);
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
@@ -60,7 +60,7 @@ const ProductPage = () => {
               className="object-contain object-center h-5/6"
               src={product.image}
               alt={product.title}
-              title={product.title}
+              title={`${product.title} for ${formatPrice(product.price)}`}
             />
           </div>
           <div className="m-4 lg:max-w-xl">
@@ -85,9 +85,17 @@ const ProductPage = () => {
                 reviewCount={product.rating.count}
               />
 
-              <p className="text-gray-800 text-2xl">
-                ${product.price.toFixed(2)}
-              </p>
+              <div className="flex items-center gap-4">
+                {product.discountPrice !== product.price && (
+                  <span className="text-gray-700 ml-2 line-through">
+                    {formatPrice(product.price)}
+                  </span>
+                )}
+
+                <p className="text-gray-800 text-2xl">
+                  {formatPrice(product.discountPrice)}
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-between items-center my-4">

@@ -7,6 +7,7 @@ import Spinner from '../components/Spinner';
 import Hero from '../components/Hero';
 import { Product } from '../types/Product.interface';
 import heroBg from '../assets/hero-bg.jpg';
+import { fetchProducts } from '../utils/dataFetch';
 
 const HomePage = () => {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
@@ -15,11 +16,11 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProducts = async (count: number) => {
+    const fetchBestsellers = async (count: number) => {
       try {
-        const api = process.env.API_URL;
-        const response = await fetch(`${api}/products?limit=${count}`);
-        const data = await response.json();
+        setLoading(true);
+        const data = await fetchProducts(count);
+        data.sort(() => Math.random() - 0.5); // Shuffle the products
         setBestSellers(data);
       } catch (error) {
         console.error(error);
@@ -28,7 +29,7 @@ const HomePage = () => {
       }
     };
 
-    fetchProducts(10);
+    fetchBestsellers(10);
   }, []);
 
   useEffect(() => {

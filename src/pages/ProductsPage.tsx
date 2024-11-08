@@ -5,11 +5,8 @@ import { Helmet } from 'react-helmet';
 import { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
 import ProductCard from '../components/ProductCard';
-import {
-  titleCase,
-  calculateOriginalPrice,
-  randomNumber,
-} from '../utils/helpers';
+import { titleCase } from '../utils/helpers';
+import { fetchProducts } from '../utils/dataFetch';
 
 interface ProductsPageProps {
   title?: string;
@@ -23,26 +20,10 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
   const { category } = useParams<{ category: string }>();
 
   useEffect(() => {
-    const fetchProducts = async (category?: string) => {
+    const fetchProductsByCategory = async (category?: string) => {
       try {
-        const api =
-          process.env.API_URL +
-          '/products' +
-          (category ? `/category/${category}` : '') +
-          `?limit=${numberOfProducts}`;
-
-        const response = await fetch(api);
-        const data = await response.json();
-
-        // Simulate a discount between 10% and 35% on 30% of products
-        data.forEach((product: Product) => {
-          const discount =
-            Math.random() < 0.3 ? Math.round(randomNumber(10, 35)) : 0;
-          product.fullPrice = calculateOriginalPrice(product.price, discount);
-        });
-
-        // Shuffle the products
-        data.sort(() => Math.random() - 0.5);
+        setLoading(true);
+        const data = await fetchProducts(numberOfProducts, category);
         setProducts(data);
       } catch (error) {
         console.error(error);
@@ -51,7 +32,7 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
       }
     };
 
-    fetchProducts(category);
+    fetchProductsByCategory(category);
   }, [category, numberOfProducts]);
 
   return (

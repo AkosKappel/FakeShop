@@ -57,13 +57,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Link to={`/products/${product.id}`}>
               <div className="flex items-center flex-wrap">
                 <span className="text-gray-700 font-semibold">Price:</span>
-                {product.fullPrice !== product.price && (
+                {product.discountPrice !== product.price && (
                   <span className="text-gray-700 ml-2 line-through">
-                    {formatPrice(product.fullPrice)}
+                    {formatPrice(product.price)}
                   </span>
                 )}
                 <span className="text-gray-800 font-bold ml-2 text-xl">
-                  {formatPrice(product.price)}
+                  {formatPrice(product.discountPrice)}
                 </span>
               </div>
             </Link>
