@@ -77,7 +77,9 @@ const CartPage = () => {
                       <h2 className="text-lg font-semibold wrap">
                         {item.title}
                       </h2>
-                      <p className="text-gray-600">{formatPrice(item.price)}</p>
+                      <p className="text-gray-600">
+                        {formatPrice(item.discountPrice)}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -89,7 +91,7 @@ const CartPage = () => {
                   />
                   <div className="text-right">
                     <p className="text-lg font-semibold">
-                      {formatPrice(item.price * item.quantity)}
+                      {formatPrice(item.discountPrice * item.quantity)}
                     </p>
                   </div>
                   <FaRegTrashAlt

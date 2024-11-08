@@ -19,7 +19,7 @@ const randomInteger = (
 const calculateDiscountPrice = (price: number, discount: number): number =>
   price * (1 - discount / 100);
 
-const addDiscount = (product: Product, seed: string) => {
+export const addProductDiscountPrice = (product: Product, seed: string) => {
   const probability = murmur2(product.title + seed) / MAX_UINT_32;
 
   if (probability < DISCOUNT_PROBABILITY) {
@@ -49,7 +49,7 @@ export const fetchProducts = async (
 
   // Simulate a discount on a daily basis
   const today = new Date().toISOString().slice(0, 10);
-  data.forEach((product: Product) => addDiscount(product, today));
+  data.forEach((product: Product) => addProductDiscountPrice(product, today));
 
   // Shuffle the products
   data.sort(() => Math.random() - 0.5);
@@ -71,7 +71,7 @@ export const fetchProduct = async (id?: string) => {
 
   // Calculate discount
   const today = new Date().toISOString().slice(0, 10);
-  addDiscount(data, today);
+  addProductDiscountPrice(data, today);
 
   return data;
 };

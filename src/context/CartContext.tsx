@@ -5,6 +5,7 @@ import {
   CartContextProps,
   CartAction,
 } from '../types/Cart.interface';
+import { addProductDiscountPrice } from '../utils/dataFetch';
 
 const initialCart: CartState = {
   items: [],
@@ -20,22 +21,25 @@ export const CartContext = createContext<CartContextProps>({
   clearCart: () => {},
 });
 
+const calculateTotalPrice = (items: CartItem[]) => {
+  return items.reduce(
+    (total, item) => total + item.discountPrice * item.quantity,
+    0
+  );
+};
+
+const calculateTotalQuantity = (items: CartItem[]) => {
+  return items.reduce((total, item) => total + item.quantity, 0);
+};
+
+const findItemIndex = (items: CartItem[], id: number) => {
+  return items.findIndex((item) => item.id === id);
+};
+
 const cartReducer = (cart: CartState, action: CartAction): CartState => {
-  const calculateTotalPrice = (items: CartItem[]) => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const calculateTotalQuantity = (items: CartItem[]) => {
-    return items.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  const findIndex = (items: CartItem[], id: number) => {
-    return items.findIndex((item) => item.id === id);
-  };
-
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItemIndex = findIndex(cart.items, action.payload.id);
+      const existingItemIndex = findItemIndex(cart.items, action.payload.id);
 
       const updatedItems =
         existingItemIndex === -1
@@ -54,7 +58,7 @@ const cartReducer = (cart: CartState, action: CartAction): CartState => {
     }
 
     case 'REMOVE_ITEM': {
-      const existingItemIndex = findIndex(cart.items, action.payload.id);
+      const existingItemIndex = findItemIndex(cart.items, action.payload.id);
 
       if (existingItemIndex === -1) {
         return cart;
@@ -92,6 +96,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       const parsedCart = JSON.parse(storedCart);
+
+      // Recalculate discounts (might have changed since last visit)
+      const today = new Date().toISOString().slice(0, 10);
+      parsedCart.items.forEach((item: CartItem) => {
+        addProductDiscountPrice(item, today);
+      });
+      // Recalculate totals
+      parsedCart.totalPrice = calculateTotalPrice(parsedCart.items);
+      parsedCart.totalQuantity = calculateTotalQuantity(parsedCart.items);
+
       dispatch({ type: 'LOAD_CART', payload: parsedCart });
     }
   }, []);

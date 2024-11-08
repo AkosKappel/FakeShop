@@ -16,7 +16,6 @@ interface ProductsPageProps {
 const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [page, setPage] = useState<number>(1); TODO: Implement pagination
   const { category } = useParams<{ category: string }>();
 
   useEffect(() => {
