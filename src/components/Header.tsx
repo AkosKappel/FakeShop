@@ -5,6 +5,7 @@ import { FaShoppingCart, FaBars } from 'react-icons/fa';
 import { titleCase } from '../utils/helpers';
 import { useCart } from '../hooks/CartHooks';
 import { formatPrice } from '../utils/helpers';
+import { fetchCategories } from '../utils/dataFetch';
 
 const Header = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -13,18 +14,16 @@ const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchProductCategories = async () => {
       try {
-        const api = process.env.API_URL;
-        const response = await fetch(`${api}/products/categories`);
-        const data = await response.json();
+        const data = await fetchCategories();
         setCategories(data);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchCategories();
+    fetchProductCategories();
   }, []);
 
   useEffect(() => {

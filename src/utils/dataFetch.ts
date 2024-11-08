@@ -72,3 +72,16 @@ export const fetchProduct = async (id?: string) => {
 
   return data;
 };
+
+export const fetchCategories = async () => {
+  const baseUrl = process.env.API_URL;
+  if (!baseUrl) {
+    throw new Error('API_URL is not defined');
+  }
+
+  const url = `${baseUrl}/products/categories`;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return data;
+};
