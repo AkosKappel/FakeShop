@@ -51,6 +51,9 @@ export const fetchProducts = async (
   const today = new Date().toISOString().slice(0, 10);
   data.forEach((product: Product) => addDiscount(product, today));
 
+  // Shuffle the products
+  data.sort(() => Math.random() - 0.5);
+
   return data;
 };
 

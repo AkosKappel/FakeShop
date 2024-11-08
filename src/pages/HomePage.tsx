@@ -20,7 +20,6 @@ const HomePage = () => {
       try {
         setLoading(true);
         const data = await fetchProducts(count);
-        data.sort(() => Math.random() - 0.5); // Shuffle the products
         setBestSellers(data);
       } catch (error) {
         console.error(error);
