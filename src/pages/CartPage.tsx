@@ -55,7 +55,7 @@ const CartPage = () => {
                 to="/"
                 className="rounded-md bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400"
               >
-                Go to Home
+                Go to Home Page
               </Link>
             </div>
           </div>
