@@ -35,7 +35,7 @@ const SummaryPage = () => {
                   x {product.quantity}
                 </span>
               </p>
-              <p>{formatPrice(product.price * product.quantity)}</p>
+              <p>{formatPrice(product.discountPrice * product.quantity)}</p>
             </div>
           ))}
         </section>

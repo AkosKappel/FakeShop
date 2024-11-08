@@ -60,7 +60,7 @@ const ProductPage = () => {
               className="object-contain object-center h-5/6"
               src={product.image}
               alt={product.title}
-              title={`${product.title} for ${formatPrice(product.price)}`}
+              title={`${product.title} for ${formatPrice(product.discountPrice)}`}
             />
           </div>
           <div className="m-4 lg:max-w-xl">
