@@ -4,8 +4,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* The flag font only exists where the polyfill loads it (Windows). */
   --font-sans:
-    'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+    'Twemoji Country Flags', 'Plus Jakarta Sans Variable', ui-sans-serif,
+    system-ui, sans-serif;
 
   --color-brand-50: var(--color-pink-50);
   --color-brand-100: var(--color-pink-100);

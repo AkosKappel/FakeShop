@@ -29,3 +29,12 @@ export const formatShortDate = (value: Date) => shortDate.format(value);
 export function pluralize(count: number, singular: string, plural: string) {
   return `${count} ${plurals.select(count) === 'one' ? singular : plural}`;
 }
+
+/** "GB" → 🇬🇧: each letter maps to a regional indicator symbol. */
+export function flagEmoji(regionCode: string): string {
+  return String.fromCodePoint(
+    ...[...regionCode.toUpperCase()].map(
+      (letter) => 0x1f1e6 + letter.charCodeAt(0) - 65
+    )
+  );
+}

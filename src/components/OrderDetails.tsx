@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 
 import OrderSummary from './OrderSummary';
 import { DELIVERY_METHODS } from '../lib/checkout';
-import { formatPrice } from '../lib/format';
+import { flagEmoji, formatPrice } from '../lib/format';
 import { deliveryWindow, type Order } from '../lib/orders';
 
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
@@ -48,6 +48,7 @@ export default function OrderDetails({ order }: { order: Order }) {
             <br />
             {shipping.zip} {shipping.city}
             <br />
+            {flagEmoji(shipping.country)}{' '}
             {regionNames.of(shipping.country) ?? shipping.country}
           </address>
         </div>

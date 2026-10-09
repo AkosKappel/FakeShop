@@ -20,7 +20,7 @@ import {
   promoStore,
   type DeliveryMethod,
 } from '../lib/checkout';
-import { formatPrice, formatShortDate } from '../lib/format';
+import { flagEmoji, formatPrice, formatShortDate } from '../lib/format';
 import {
   addressStore,
   newOrderNumber,
@@ -369,7 +369,7 @@ export default function CheckoutPage() {
                   >
                     {COUNTRIES.map(({ code, name }) => (
                       <option key={code} value={code}>
-                        {name}
+                        {`${flagEmoji(code)} ${name}`}
                       </option>
                     ))}
                   </select>
