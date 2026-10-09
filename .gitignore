@@ -26,3 +26,7 @@ dist-ssr
 # Local planning and worktrees
 BACKLOG.md
 .worktrees/
+
+# Tests
+test-results/
+playwright-report/
