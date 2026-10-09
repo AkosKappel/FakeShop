@@ -10,11 +10,13 @@ import {
   LuMoon,
   LuPackage,
   LuRefreshCw,
+  LuScale,
   LuSearch,
   LuShieldCheck,
   LuShoppingBag,
   LuSmartphone,
   LuTag,
+  LuUser,
 } from 'react-icons/lu';
 
 import { LogoMark } from '../components/Logo';
@@ -56,6 +58,16 @@ const FEATURES: { icon: IconType; title: string; text: string }[] = [
     text: 'Save products for later, see what you viewed recently and revisit past orders.',
   },
   {
+    icon: LuScale,
+    title: 'Compare products',
+    text: 'Put up to three products side by side, with the best price, rating and weight highlighted.',
+  },
+  {
+    icon: LuUser,
+    title: 'Demo sign-in',
+    text: 'Sign in with a DummyJSON demo account and checkout fills in your address.',
+  },
+  {
     icon: LuRefreshCw,
     title: 'Synced tabs',
     text: 'Add something in one tab and every other open tab updates right away.',
@@ -68,7 +80,7 @@ const FEATURES: { icon: IconType; title: string; text: string }[] = [
   {
     icon: LuSmartphone,
     title: 'Made for every screen',
-    text: 'Swipeable product rows, a filter drawer and a sticky add-to-cart bar on phones.',
+    text: 'Swipeable product rows, a filter drawer, a sticky add-to-cart bar, and installable as an app.',
   },
 ];
 
@@ -185,7 +197,8 @@ export default function AboutPage() {
             items: [
               'Nowhere. Cart, wishlist and orders stay in this browser (localStorage)',
               'Card details are never saved, only the last 4 digits of an order',
-              'No accounts, no cookies, no tracking',
+              'Signing in is optional; only your name, email and address are kept, with a token that expires after an hour',
+              'No cookies, no tracking',
             ],
             tone: 'text-sky-700 dark:text-sky-400',
           },
@@ -202,7 +215,7 @@ export default function AboutPage() {
       </div>
 
       <Section id="features" title="What you can do">
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {FEATURES.map(({ icon: Icon, title, text }) => (
             <li key={title} className="card p-5">
               <Icon
