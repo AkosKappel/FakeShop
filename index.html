@@ -2,11 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FakeShop</title>
+    <title>FakeShop – a demo online store</title>
+    <meta
+      name="description"
+      content="FakeShop is a demo online store built with React, React Router and Tailwind CSS: search, filters, cart, wishlist and a full checkout. Nothing is for sale."
+    />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+    <meta name="theme-color" content="#db2777" />
+    <link rel="canonical" href="https://akoskappel.github.io/FakeShop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FakeShop" />
+    <meta property="og:title" content="FakeShop – a demo online store" />
+    <meta
+      property="og:description"
+      content="Search, filters, cart, wishlist and a full checkout. Nothing is for sale."
+    />
+    <meta property="og:url" content="https://akoskappel.github.io/FakeShop/" />
+    <meta
+      property="og:image"
+      content="https://akoskappel.github.io/FakeShop/og-image.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Apply the saved or system theme before the first paint.
+      try {
+        const saved = JSON.parse(localStorage.getItem('fakeshop:theme'));
+        const dark = saved
+          ? saved === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+      } catch {}
+    </script>
   </head>
-
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

@@ -1,162 +1,261 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router';
-import { FaShoppingCart, FaBars } from 'react-icons/fa';
+import { useRef } from 'react';
+import { Link, NavLink, useLocation } from 'react-router';
+import {
+  LuChevronDown,
+  LuHeart,
+  LuMenu,
+  LuMoon,
+  LuShoppingBag,
+  LuSun,
+  LuX,
+} from 'react-icons/lu';
 
-import { titleCase } from '../utils/helpers';
-import { useCart } from '../hooks/CartHooks';
-import { formatPrice } from '../utils/helpers';
-import { fetchCategories } from '../utils/dataFetch';
+import Logo from './Logo';
+import SearchBox from './SearchBox';
+import { useCart } from '../lib/cart';
+import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
+import { pluralize } from '../lib/format';
+import { useWishlist } from '../lib/lists';
+import { setTheme, useTheme } from '../lib/theme';
 
-const Header = () => {
-  const [categories, setCategories] = useState<string[]>([]);
-  const { cart } = useCart();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+const NAV_LINKS = [
+  { to: '/products', label: 'All products' },
+  { to: '/products?sale=1&sort=discount', label: 'Deals' },
+  { to: '/products?sort=rating', label: 'Top rated' },
+  { to: '/about', label: 'About' },
+];
 
-  useEffect(() => {
-    const fetchProductCategories = async () => {
-      try {
-        const data = await fetchCategories();
-        setCategories(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+function CountBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span
+      key={count}
+      className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 animate-[badge-pop_300ms_ease-out] items-center justify-center rounded-full bg-brand-600 px-1 text-[11px] font-bold text-white"
+    >
+      {count > 99 ? '99+' : count}
+    </span>
+  );
+}
 
-    fetchProductCategories();
-  }, []);
+function ThemeToggle() {
+  const theme = useTheme();
+  const next = theme === 'dark' ? 'light' : 'dark';
+  return (
+    <button
+      type="button"
+      className="btn-icon"
+      onClick={() => setTheme(next)}
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
+    >
+      {theme === 'dark' ? (
+        <LuSun className="size-5" />
+      ) : (
+        <LuMoon className="size-5" />
+      )}
+    </button>
+  );
+}
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setMenuOpen(false);
-      }
-    };
+function CategoryLinks({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+      {CATEGORY_GROUPS.map((group) => (
+        <div key={group.slug}>
+          <p className="mb-2 text-xs font-bold tracking-wider text-zinc-500 uppercase dark:text-zinc-400">
+            {group.name}
+          </p>
+          <ul className="space-y-1">
+            {group.categories.map((slug) => (
+              <li key={slug}>
+                <Link
+                  to={`/category/${slug}`}
+                  onClick={onNavigate}
+                  className="block rounded-lg px-2 py-1.5 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  {categoryName(slug)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setMenuOpen(false); // Close the menu if screen is large enough
-      }
-    };
+function CategoryMenu() {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const activeLinkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive
-      ? 'flex nowrap items-center underline-effect text-pink-300 hover:text-pink-500 font-bold'
-      : 'flex nowrap items-center underline-effect text-gray-300 hover:text-pink-500 font-semibold';
+  // The popover lives in the top layer; place it under the button when it opens.
+  const placePanel = () => {
+    const panel = panelRef.current;
+    const button = buttonRef.current;
+    if (!panel || !button) return;
+    const rect = button.getBoundingClientRect();
+    panel.style.top = `${rect.bottom + 8}px`;
+    panel.style.left = `${Math.max(16, rect.left)}px`;
+  };
 
   return (
-    <header className="flex justify-between items-center p-4 min-h-20 bg-slate-900 shadow-md">
-      <div className="text-pink-300 italic font-bold text-4xl m-2">
-        <Link to="/">
-          <h1>
-            Fake
-            <span className="text-gray-300">Shop</span>
-            <FaShoppingCart className="hidden sm:inline-block ml-2 text-3xl" />
-          </h1>
-          <p className="hidden sm:block text-sm text-gray-300">
-            A fake online store for shopping!
-          </p>
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        popoverTarget="category-menu"
+        onClick={placePanel}
+        className="flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800"
+      >
+        Categories
+        <LuChevronDown className="size-4" aria-hidden="true" />
+      </button>
+      <div
+        ref={panelRef}
+        id="category-menu"
+        popover="auto"
+        className="card fixed inset-auto m-0 w-[min(56rem,calc(100vw-2rem))] p-6 shadow-2xl"
+      >
+        <CategoryLinks onNavigate={() => panelRef.current?.hidePopover()} />
+        <Link
+          to="/categories"
+          onClick={() => panelRef.current?.hidePopover()}
+          className="link mt-6 inline-block text-sm"
+        >
+          Browse all categories
         </Link>
       </div>
-      <div className="hidden lg:flex items-center space-x-4 mx-4">
-        {categories.map((category) => (
-          <NavLink
-            key={category}
-            to={`/products/category/${category}`}
-            className={activeLinkClass}
-          >
-            {titleCase(category)}
-          </NavLink>
-        ))}
-      </div>
-      <div className="flex flex-nowrap space-x-8 mx-4 text-gray-300 text-xl font-semibold">
-        <div className="hidden md:flex flex-nowrap space-x-8">
-          <NavLink to="/products" className={activeLinkClass}>
-            Products
-          </NavLink>
-          <NavLink to="/about" className={activeLinkClass}>
-            About
-          </NavLink>
-        </div>
-        <div className="flex items-center space-x-8">
-          <NavLink to="/cart" className={activeLinkClass}>
-            <FaShoppingCart className="inline-block ml-2 text-3xl" />
-            {cart.totalQuantity > 0 && (
-              <div className="inline-block min-w-20 text-sm">
-                <span className="ml-1 font-bold">
-                  {formatPrice(cart.totalPrice)}
-                </span>
-                <span className="ml-1 font-bold">({cart.totalQuantity})</span>
-              </div>
-            )}
-          </NavLink>
-          <div className="lg:hidden flex items-center">
+    </>
+  );
+}
+
+function MobileMenu() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const close = () => dialogRef.current?.close();
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn-icon lg:hidden"
+        onClick={() => dialogRef.current?.showModal()}
+        aria-label="Open menu"
+      >
+        <LuMenu className="size-6" />
+      </button>
+      <dialog
+        ref={dialogRef}
+        aria-label="Menu"
+        onClick={(event) => {
+          // A click on the backdrop lands on the dialog element itself.
+          if (event.target === event.currentTarget) close();
+        }}
+        className="m-0 h-dvh max-h-none w-[min(22rem,88vw)] bg-white p-0 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
+            <Logo />
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-300 focus:outline-none"
+              type="button"
+              className="btn-icon"
+              onClick={close}
+              aria-label="Close menu"
             >
-              <FaBars className="text-3xl" />
+              <LuX className="size-6" />
             </button>
           </div>
+          <nav aria-label="Mobile" className="flex-1 overflow-y-auto p-4">
+            <ul className="mb-4 space-y-1">
+              {NAV_LINKS.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    onClick={close}
+                    className="block rounded-lg px-2 py-2 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  to="/orders"
+                  onClick={close}
+                  className="block rounded-lg px-2 py-2 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  Your orders
+                </Link>
+              </li>
+            </ul>
+            <p className="mb-3 px-2 text-sm font-bold">Categories</p>
+            <div className="px-2">
+              <CategoryLinks onNavigate={close} />
+            </div>
+          </nav>
+        </div>
+      </dialog>
+    </>
+  );
+}
+
+export default function Header() {
+  const { count } = useCart();
+  const wishlistCount = useWishlist().length;
+  const { pathname, search } = useLocation();
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/85 backdrop-blur-lg dark:border-zinc-800 dark:bg-zinc-950/85">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:gap-4">
+        <MobileMenu />
+        <Logo />
+        <div className="mx-4 hidden max-w-xl flex-1 md:block">
+          <SearchBox />
+        </div>
+        <div className="ml-auto flex items-center gap-1">
+          <ThemeToggle />
+          <Link
+            to="/wishlist"
+            className="btn-icon relative"
+            aria-label={`Wishlist, ${pluralize(wishlistCount, 'item', 'items')}`}
+          >
+            <LuHeart className="size-5" />
+            <CountBadge count={wishlistCount} />
+          </Link>
+          <Link
+            to="/cart"
+            className="btn-icon relative"
+            aria-label={`Cart, ${pluralize(count, 'item', 'items')}`}
+          >
+            <LuShoppingBag className="size-5" />
+            <CountBadge count={count} />
+          </Link>
         </div>
       </div>
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute top-16 right-4 bg-slate-800 text-gray-300 rounded shadow-lg py-2 w-48 z-20"
+      <div className="px-4 pb-3 md:hidden">
+        <SearchBox />
+      </div>
+      <nav
+        aria-label="Main"
+        className="mx-auto hidden h-11 max-w-7xl items-center gap-1 px-2 text-sm lg:flex"
+      >
+        <CategoryMenu />
+        {NAV_LINKS.map((link) => (
+          <Link
+            key={link.to}
+            to={link.to}
+            aria-current={pathname + search === link.to ? 'page' : undefined}
+            className="rounded-full px-3 py-1.5 font-semibold hover:bg-zinc-100 aria-[current=page]:text-brand-700 dark:hover:bg-zinc-800 dark:aria-[current=page]:text-brand-400"
+          >
+            {link.label}
+          </Link>
+        ))}
+        <NavLink
+          to="/orders"
+          className="ml-auto rounded-full px-3 py-1.5 font-semibold text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
         >
-          {categories.map((category) => (
-            <NavLink
-              key={category}
-              to={`/products/category/${category}`}
-              onClick={() => setMenuOpen(false)}
-              className="block px-4 py-2 hover:bg-slate-700"
-            >
-              {titleCase(category)}
-            </NavLink>
-          ))}
-          <NavLink
-            to="/products"
-            onClick={() => setMenuOpen(false)}
-            className="block px-4 py-2 hover:bg-slate-700"
-          >
-            Products
-          </NavLink>
-          <NavLink
-            to="/about"
-            onClick={() => setMenuOpen(false)}
-            className="block px-4 py-2 hover:bg-slate-700"
-          >
-            About
-          </NavLink>
-          <NavLink
-            to="/cart"
-            onClick={() => setMenuOpen(false)}
-            className="px-4 py-2 hover:bg-slate-700 flex items-center"
-          >
-            <FaShoppingCart className="mr-2" />
-            {cart.totalQuantity > 0 && (
-              <span className="ml-1 font-bold">
-                {formatPrice(cart.totalPrice)} ({cart.totalQuantity})
-              </span>
-            )}
-          </NavLink>
-        </div>
-      )}
+          Your orders
+        </NavLink>
+      </nav>
     </header>
   );
-};
-
-export default Header;
+}

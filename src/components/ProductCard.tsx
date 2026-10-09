@@ -1,88 +1,84 @@
-import { useState } from 'react';
 import { Link } from 'react-router';
-import { FaSearch } from 'react-icons/fa';
+import { LuShoppingBag } from 'react-icons/lu';
 
-import ModalImage from './ModalImage';
-import type { Product } from '../types/Product.interface';
-import { formatPrice, truncate } from '../utils/helpers';
-import { useCart } from '../hooks/CartHooks';
+import Price from './Price';
+import Rating from './Rating';
+import WishlistButton from './WishlistButton';
+import type { ProductSummary } from '../lib/api';
+import { addToCartWithToast } from '../lib/cart';
+import { categoryName, isOnSale } from '../lib/catalog';
+import { formatPercent } from '../lib/format';
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductSummary;
+  /** Load the image eagerly (first row above the fold). */
+  priority?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { addToCart } = useCart();
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const handleAddToCart = () => {
-    addToCart({ ...product, quantity: 1 });
-  };
+export default function ProductCard({ product, priority }: ProductCardProps) {
+  const soldOut = product.stock <= 0;
+  const lowStock = !soldOut && product.stock <= 5;
 
   return (
-    <>
-      <div className="bg-white shadow-lg rounded-lg flex flex-col justify-between">
-        <div
-          className="relative flex justify-center items-center m-3 cursor-pointer"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={openModal}
-        >
-          <img
-            className="h-64 w-64 object-contain object-center"
-            src={product.image}
-            alt={product.title}
-            title={product.title}
-          />
-          {isHovered && (
-            <div className="absolute inset-0 flex justify-center items-center bg-gray-800/50">
-              <FaSearch className="text-white text-3xl" />
-            </div>
-          )}
-        </div>
-        <div className="p-4">
-          <Link to={`/products/${product.id}`}>
-            <h2
-              className="text-gray-800 text-2xl font-semibold hover:text-pink-500"
-              title={product.title}
-            >
-              {truncate(product.title, 50)}
-            </h2>
+    <article className="card group relative flex w-full flex-col overflow-hidden transition-shadow hover:shadow-lg">
+      <div className="image-tile relative aspect-square">
+        <img
+          src={product.thumbnail}
+          alt=""
+          width={300}
+          height={300}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          className="size-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+        />
+        {isOnSale(product) && (
+          <span className="absolute top-3 left-3 rounded-full bg-brand-600 px-2.5 py-1 text-xs font-bold text-white">
+            −{formatPercent(product.discountPercentage)}
+          </span>
+        )}
+        <WishlistButton
+          productId={product.id}
+          title={product.title}
+          className="btn-icon absolute top-2 right-2 z-10 bg-white/80 text-zinc-700 backdrop-blur hover:bg-white dark:text-zinc-700 dark:hover:bg-white"
+        />
+      </div>
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          {product.brand ?? categoryName(product.category)}
+        </p>
+        <h3 className="line-clamp-2 leading-snug font-semibold">
+          <Link
+            to={`/products/${product.id}`}
+            viewTransition
+            className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:rounded-2xl after:focus-visible:outline-2 after:focus-visible:outline-brand-500"
+          >
+            {product.title}
           </Link>
-          <div className="flex items-center mt-3">
-            <Link to={`/products/${product.id}`}>
-              <div className="flex items-center flex-wrap">
-                <span className="text-gray-700 font-semibold">Price:</span>
-                {product.discountPrice !== product.price && (
-                  <span className="text-gray-700 ml-2 line-through">
-                    {formatPrice(product.price)}
-                  </span>
-                )}
-                <span className="text-gray-800 font-bold ml-2 text-xl">
-                  {formatPrice(product.discountPrice)}
-                </span>
-              </div>
-            </Link>
-            <button
-              className="ml-auto bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-pink-600 min-h-12 min-w-fit"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </button>
+        </h3>
+        <Rating rating={product.rating} />
+        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
+          <div>
+            <Price product={product} />
+            {(soldOut || lowStock) && (
+              <p
+                className={`text-xs font-medium ${soldOut ? 'text-zinc-500' : 'text-amber-700 dark:text-amber-400'}`}
+              >
+                {soldOut ? 'Out of stock' : `Only ${product.stock} left`}
+              </p>
+            )}
           </div>
+          <button
+            type="button"
+            className="btn-icon relative z-10 bg-zinc-900 text-white hover:bg-brand-600 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-brand-500 dark:hover:text-white"
+            onClick={() => addToCartWithToast(product)}
+            disabled={soldOut}
+            aria-label={`Add ${product.title} to cart`}
+            title="Add to cart"
+          >
+            <LuShoppingBag className="size-5" />
+          </button>
         </div>
       </div>
-      <ModalImage
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        imageUrl={product.image}
-      />
-    </>
+    </article>
   );
-};
-
-export default ProductCard;
+}

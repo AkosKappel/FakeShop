@@ -1,20 +1,45 @@
-// src/pages/NotFoundPage.tsx
 import { Link } from 'react-router';
+import { LuSearch } from 'react-icons/lu';
 
-const NotFoundPage = () => {
+import EmptyState from '../components/EmptyState';
+import SearchBox from '../components/SearchBox';
+import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
+
+const POPULAR = ['smartphones', 'laptops', 'womens-dresses', 'fragrances'];
+
+export default function NotFoundPage({ what = 'page' }: { what?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-6xl font-bold text-pink-700 mb-4">404</h1>
-      <p className="text-2xl text-gray-700 mb-8">Page Not Found</p>
-      <Link
-        to="/"
-        className="rounded-md bg-pink-700 text-white px-4 py-2 hover:bg-pink-800"
+    <>
+      <title>Not found | FakeShop</title>
+      <h1 className="sr-only">Not found</h1>
+      <EmptyState
+        icon={LuSearch}
+        title={`This ${what} does not exist`}
+        actions={
+          <div className="w-full max-w-md space-y-6">
+            <SearchBox />
+            <div className="flex flex-wrap justify-center gap-2">
+              {POPULAR.map((slug) => (
+                <Link
+                  key={slug}
+                  to={`/category/${slug}`}
+                  className="rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-medium hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                >
+                  {categoryName(slug)}
+                </Link>
+              ))}
+            </div>
+            <Link to="/" className="btn-primary">
+              Go to the home page
+            </Link>
+          </div>
+        }
       >
-        Go to Home Page
-      </Link>
-      <div className="h-52"></div>
-    </div>
+        <p>
+          It may have been moved, or the link is wrong. Search the shop or
+          browse one of {CATEGORY_GROUPS.length} departments.
+        </p>
+      </EmptyState>
+    </>
   );
-};
-
-export default NotFoundPage;
+}

@@ -1,47 +1,57 @@
-import { FaPlus, FaMinus } from 'react-icons/fa';
+import { LuMinus, LuPlus } from 'react-icons/lu';
+
+import { clampQuantity, maxQuantity } from '../lib/cart';
 
 interface QuantityPickerProps {
   quantity: number;
-  setQuantity?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onIncrement: () => void;
-  onDecrement: () => void;
-  editable?: boolean;
+  stock: number;
+  onChange: (quantity: number) => void;
+  label: string;
 }
 
-const QuantityPicker = ({
+export default function QuantityPicker({
   quantity,
-  setQuantity = () => {},
-  onIncrement,
-  onDecrement,
-  editable = false,
-}: QuantityPickerProps) => {
+  stock,
+  onChange,
+  label,
+}: QuantityPickerProps) {
+  const max = maxQuantity(stock);
   return (
-    <div className="flex items-center space-x-4">
+    <div
+      role="group"
+      aria-label={label}
+      className="inline-flex h-11 items-center rounded-full ring-1 ring-zinc-300 ring-inset dark:ring-zinc-700"
+    >
       <button
-        onClick={onDecrement}
-        className="rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 px-2 py-2"
+        type="button"
+        className="btn-icon"
+        onClick={() => onChange(clampQuantity(quantity - 1, stock))}
+        disabled={quantity <= 1}
+        aria-label="Decrease quantity"
       >
-        <FaMinus />
+        <LuMinus className="size-4" />
       </button>
-      {editable ? (
-        <input
-          type="number"
-          value={quantity}
-          className="w-10 h-8 text-center border border-gray-400 rounded-lg mx-2"
-          onChange={setQuantity}
-          min={1}
-        />
-      ) : (
-        <span className="mx-4">{quantity}</span>
-      )}
+      <input
+        type="number"
+        inputMode="numeric"
+        min={1}
+        max={max}
+        value={quantity}
+        aria-label="Quantity"
+        onChange={(event) =>
+          onChange(clampQuantity(event.target.valueAsNumber, stock))
+        }
+        className="w-10 [appearance:textfield] bg-transparent text-center text-sm font-semibold tabular-nums focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
+      />
       <button
-        onClick={onIncrement}
-        className="rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800 px-2 py-2"
+        type="button"
+        className="btn-icon"
+        onClick={() => onChange(clampQuantity(quantity + 1, stock))}
+        disabled={quantity >= max}
+        aria-label="Increase quantity"
       >
-        <FaPlus />
+        <LuPlus className="size-4" />
       </button>
     </div>
   );
-};
-
-export default QuantityPicker;
+}

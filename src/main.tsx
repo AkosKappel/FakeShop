@@ -1,14 +1,18 @@
-// import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router/dom';
 
-import App from './App.tsx';
 import './index.css';
-import { CartProvider } from './context/CartContext';
+import { router } from './router';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <React.StrictMode>
-  <CartProvider>
-    <App />
-  </CartProvider>
-  // </React.StrictMode>
+// The 2024 version kept the whole checkout form, card number included, in
+// localStorage. Remove it (and the old cart format) from returning browsers.
+for (const key of ['checkoutFormData', 'cart']) {
+  localStorage.removeItem(key);
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
 );

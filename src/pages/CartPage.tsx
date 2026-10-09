@@ -1,131 +1,262 @@
+import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
-import { FaRegTrashAlt } from 'react-icons/fa';
+import {
+  LuArrowRight,
+  LuShoppingBag,
+  LuTag,
+  LuTrash2,
+  LuX,
+} from 'react-icons/lu';
 
+import Breadcrumbs from '../components/Breadcrumbs';
+import EmptyState from '../components/EmptyState';
+import OrderSummary from '../components/OrderSummary';
 import QuantityPicker from '../components/QuantityPicker';
-import { useCart } from '../hooks/CartHooks';
-import type { CartItem } from '../types/Cart.interface';
-import { formatPrice } from '../utils/helpers';
+import { cart, useCart, type CartLine } from '../lib/cart';
+import {
+  FREE_SHIPPING_THRESHOLD,
+  findPromo,
+  orderTotals,
+  promoStore,
+} from '../lib/checkout';
+import { formatPrice, pluralize } from '../lib/format';
+import { useStore } from '../lib/store';
+import { toast } from '../lib/toast';
 
-const CartPage = () => {
-  const { cart, addToCart, removeFromCart, clearCart } = useCart();
+function removeWithUndo(line: CartLine, index: number) {
+  cart.remove(line.id);
+  toast(`${line.title} removed from your cart`, {
+    label: 'Undo',
+    onClick: () => cart.restore(line, index),
+  });
+}
 
-  const handleIncreaseQuantity = (item: CartItem) => {
-    addToCart({ ...item, quantity: 1 });
-  };
-
-  const handleDecreaseQuantity = (item: CartItem) => {
-    removeFromCart(item.id, 1);
-  };
-
-  const handleClearCart = () => {
-    const confirmClear = window.confirm(
-      'Are you sure you want to remove all items from your cart?'
-    );
-    if (confirmClear) clearCart();
-  };
-
+function FreeShippingProgress({ subtotal }: { subtotal: number }) {
+  const missing = FREE_SHIPPING_THRESHOLD - subtotal;
+  const progress = Math.min(subtotal / FREE_SHIPPING_THRESHOLD, 1);
   return (
-    <div className="container mx-auto">
-      <div className="h-12"></div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold mx-4 my-2">My Shopping Cart</h1>
-        {cart.totalQuantity > 0 && (
-          <button
-            onClick={handleClearCart}
-            className="rounded-md text-white px-4 py-2 mx-4 bg-pink-700 hover:bg-pink-800"
-          >
-            Remove All
-          </button>
-        )}
-      </div>
-      <div className="mt-4">
-        {cart.totalQuantity === 0 ? (
-          <div>
-            <p className="text-center text-gray-600">Your cart is empty.</p>
-            <div className="h-16"></div>
-            <div className="flex justify-center">
-              <Link
-                to="/products"
-                className="rounded-md text-white px-4 py-2 bg-pink-700 hover:bg-pink-800"
-              >
-                Continue Shopping
-              </Link>
-              <div className="w-4"></div>
-              <Link
-                to="/"
-                className="rounded-md bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400"
-              >
-                Go to Home Page
-              </Link>
-            </div>
-          </div>
+    <div className="space-y-2">
+      <p className="text-sm">
+        {missing > 0 ? (
+          <>
+            Add <strong>{formatPrice(missing)}</strong> more for free standard
+            delivery.
+          </>
         ) : (
-          <div className="space-y-4">
-            {cart.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center bg-white p-4 rounded-md shadow-md min-h-36 sm:flex-row flex-col"
-              >
-                <Link to={`/products/${item.id}`}>
-                  <div className="flex items-center">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-32 h-32 object-contain rounded-md"
-                    />
-                    <div className="ml-4 max-w-xs lg:max-w-xl">
-                      <h2 className="text-lg font-semibold wrap">
-                        {item.title}
-                      </h2>
-                      <p className="text-gray-600">
-                        {formatPrice(item.discountPrice)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-                <div className="flex items-center justify-between space-x-3 mt-3 mx-2 md:w-1/3 sm:w-2/3 w-4/5">
-                  <QuantityPicker
-                    quantity={item.quantity}
-                    onIncrement={() => handleIncreaseQuantity(item)}
-                    onDecrement={() => handleDecreaseQuantity(item)}
-                  />
-                  <div className="text-right">
-                    <p className="text-lg font-semibold">
-                      {formatPrice(item.discountPrice * item.quantity)}
-                    </p>
-                  </div>
-                  <FaRegTrashAlt
-                    className="text-red-500 cursor-pointer"
-                    onClick={() => removeFromCart(item.id, item.quantity)}
-                  />
-                </div>
-              </div>
-            ))}
-            <div className="text-right m-4">
-              <p className="text-lg font-bold">
-                Total: {formatPrice(cart.totalPrice)}
-              </p>
-              <p className="text-lg font-bold">
-                Quantity: {cart.totalQuantity}
-              </p>
-              <div className="flex justify-end space-x-4 my-6">
-                <Link to="/products">
-                  <button className="rounded-md bg-gray-300 text-gray-800 px-4 py-2 my-2 hover:bg-gray-400">
-                    Continue Shopping
-                  </button>
-                </Link>
-                <Link to="/checkout">
-                  <button className="rounded-md bg-pink-700 hover:bg-pink-800 text-white px-4 py-2 my-2">
-                    Checkout
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <strong className="text-emerald-700 dark:text-emerald-400">
+            Your order qualifies for free standard delivery.
+          </strong>
         )}
+      </p>
+      <div
+        className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
+        role="progressbar"
+        aria-label="Progress to free delivery"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress * 100)}
+      >
+        <div
+          className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
+          style={{ width: `${progress * 100}%` }}
+        />
       </div>
     </div>
   );
-};
+}
 
-export default CartPage;
+function PromoCodeForm() {
+  const applied = useStore(promoStore);
+  const [error, setError] = useState('');
+
+  const apply = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const code = String(new FormData(event.currentTarget).get('code'));
+    const promo = findPromo(code);
+    if (!promo) {
+      setError('This code is not valid. Try FAKE10 or FREESHIP.');
+      return;
+    }
+    setError('');
+    promoStore.set(promo.code);
+    toast(`Code ${promo.code} applied: ${promo.description.toLowerCase()}`);
+  };
+
+  if (applied) {
+    return (
+      <p className="flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+        <span className="flex items-center gap-2">
+          <LuTag className="size-4" aria-hidden="true" />
+          <span>
+            <strong>{applied}</strong> · {findPromo(applied)?.description}
+          </span>
+        </span>
+        <button
+          type="button"
+          className="cursor-pointer rounded-full p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900"
+          onClick={() => promoStore.set(null)}
+          aria-label={`Remove promo code ${applied}`}
+        >
+          <LuX className="size-4" />
+        </button>
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={apply} noValidate>
+      <label htmlFor="promo-code" className="mb-1 block text-sm font-medium">
+        Promo code
+      </label>
+      <div className="flex gap-2">
+        <input
+          id="promo-code"
+          name="code"
+          autoComplete="off"
+          autoCapitalize="characters"
+          placeholder="FAKE10"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? 'promo-error' : undefined}
+          className="field uppercase placeholder:normal-case"
+        />
+        <button type="submit" className="btn-secondary">
+          Apply
+        </button>
+      </div>
+      {error && (
+        <p
+          id="promo-error"
+          className="mt-1 text-sm text-red-600 dark:text-red-400"
+        >
+          {error}
+        </p>
+      )}
+    </form>
+  );
+}
+
+export default function CartPage() {
+  const { lines, count } = useCart();
+  const promoCode = useStore(promoStore);
+  const totals = orderTotals(lines, 'standard', promoCode ?? undefined);
+
+  return (
+    <>
+      <title>{`Cart (${count}) | FakeShop`}</title>
+      <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Cart' }]} />
+      <h1 className="mb-6 text-3xl font-extrabold tracking-tight">
+        Your cart
+        {count > 0 && (
+          <span className="ml-3 text-lg font-medium text-zinc-500 dark:text-zinc-400">
+            {pluralize(count, 'item', 'items')}
+          </span>
+        )}
+      </h1>
+
+      {lines.length === 0 ? (
+        <EmptyState
+          icon={LuShoppingBag}
+          title="Your cart is empty"
+          actions={
+            <>
+              <Link to="/products" className="btn-primary">
+                Start shopping
+              </Link>
+              <Link to="/wishlist" className="btn-secondary">
+                Open your wishlist
+              </Link>
+            </>
+          }
+        >
+          <p>
+            Find something you like. It is all free, because none of it is real.
+          </p>
+        </EmptyState>
+      ) : (
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
+          <ul className="card divide-y divide-zinc-200 dark:divide-zinc-800">
+            {lines.map((line, index) => (
+              <li key={line.id} className="flex gap-4 p-4 sm:p-5">
+                <Link
+                  to={`/products/${line.id}`}
+                  className="image-tile size-24 shrink-0 overflow-hidden rounded-xl sm:size-28"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  <img
+                    src={line.thumbnail}
+                    alt=""
+                    className="size-full object-contain p-2"
+                  />
+                </Link>
+                <div className="flex min-w-0 flex-1 flex-col gap-3">
+                  <div className="flex justify-between gap-4">
+                    <div className="min-w-0">
+                      <Link
+                        to={`/products/${line.id}`}
+                        className="line-clamp-2 font-semibold hover:underline"
+                      >
+                        {line.title}
+                      </Link>
+                      <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
+                        {formatPrice(line.price)}
+                        {line.listPrice > line.price && (
+                          <span className="ml-2 line-through">
+                            {formatPrice(line.listPrice)}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <p className="font-bold">
+                      {formatPrice(line.price * line.quantity)}
+                    </p>
+                  </div>
+                  <div className="mt-auto flex items-center justify-between gap-2">
+                    <QuantityPicker
+                      quantity={line.quantity}
+                      stock={line.stock}
+                      onChange={(quantity) =>
+                        cart.setQuantity(line.id, quantity)
+                      }
+                      label={`Quantity of ${line.title}`}
+                    />
+                    <button
+                      type="button"
+                      className="btn-icon text-zinc-500 hover:text-red-600"
+                      onClick={() => removeWithUndo(line, index)}
+                      aria-label={`Remove ${line.title} from cart`}
+                      title="Remove"
+                    >
+                      <LuTrash2 className="size-5" />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <aside
+            aria-label="Order summary"
+            className="card space-y-5 p-5 lg:sticky lg:top-32"
+          >
+            <h2 className="text-lg font-bold">Order summary</h2>
+            <FreeShippingProgress subtotal={totals.subtotal} />
+            <PromoCodeForm />
+            <OrderSummary
+              totals={totals}
+              promoCode={promoCode}
+              shippingLabel="Standard delivery"
+            />
+            <Link to="/checkout" className="btn-primary w-full">
+              Go to checkout
+              <LuArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+            <Link to="/products" className="link block text-center text-sm">
+              Continue shopping
+            </Link>
+          </aside>
+        </div>
+      )}
+    </>
+  );
+}
