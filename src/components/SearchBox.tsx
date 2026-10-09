@@ -61,7 +61,7 @@ function SearchForm({
         placeholder="Search products and brands"
         autoComplete="off"
         enterKeyHint="search"
-        className="field rounded-full pr-10 pl-10 [&::-webkit-search-cancel-button]:hidden"
+        className="field rounded-full pr-10 pl-10 [&::-webkit-calendar-picker-indicator]:hidden! [&::-webkit-search-cancel-button]:hidden"
       />
       <datalist id={listId}>
         {suggestions.map((title) => (

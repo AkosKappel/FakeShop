@@ -415,7 +415,7 @@ export default function ProductsPage() {
                       : event.target.value,
                 })
               }
-              className="field h-11 w-auto rounded-full pr-8"
+              className="select-field h-11 w-auto rounded-full"
               aria-label="Sort products"
             >
               {(Object.keys(SORT_OPTIONS) as SortKey[]).map((key) => (

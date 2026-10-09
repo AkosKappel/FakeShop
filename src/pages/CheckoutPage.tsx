@@ -337,7 +337,7 @@ export default function CheckoutPage() {
                   <select
                     {...props}
                     autoComplete="country"
-                    className="field"
+                    className="select-field"
                     {...register('country', { required: 'Choose a country' })}
                   >
                     {COUNTRIES.map(({ code, name }) => (
