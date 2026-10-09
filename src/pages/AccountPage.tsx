@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   Form,
   Link,
@@ -8,7 +8,15 @@ import {
   useNavigation,
   type ActionFunctionArgs,
 } from 'react-router';
-import { LuHeart, LuLogOut, LuPackage, LuScale, LuUser } from 'react-icons/lu';
+import {
+  LuEye,
+  LuEyeOff,
+  LuHeart,
+  LuLogOut,
+  LuPackage,
+  LuScale,
+  LuUser,
+} from 'react-icons/lu';
 
 import Breadcrumbs from '../components/Breadcrumbs';
 import {
@@ -51,6 +59,7 @@ function SignInForm({ expired }: { expired: boolean }) {
   const result = useActionData<{ error?: string }>();
   const navigation = useNavigation();
   const formRef = useRef<HTMLFormElement>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const submitting = navigation.state === 'submitting';
 
   const useDemoAccount = () => {
@@ -65,29 +74,19 @@ function SignInForm({ expired }: { expired: boolean }) {
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-2 text-3xl font-extrabold tracking-tight">Sign in</h1>
-      <p className="mb-6 text-zinc-600 dark:text-zinc-400">
-        Optional: an account fills in your address at checkout. Accounts come
-        from DummyJSON's demo users, so there is nothing to register.
-      </p>
+      <div className="mb-6 text-center">
+        <h1 className="mb-2 text-3xl font-extrabold tracking-tight">Sign in</h1>
+        <p className="text-zinc-600 dark:text-zinc-400">
+          Optional: an account fills in your address at checkout. Accounts come
+          from DummyJSON's demo users, so there is nothing to register.
+        </p>
+      </div>
       <div className="card space-y-5 p-6">
         {expired && (
           <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-300">
             Your session has expired. Please sign in again.
           </p>
         )}
-        <button
-          type="button"
-          className="btn-primary w-full"
-          onClick={useDemoAccount}
-          disabled={submitting}
-        >
-          <LuUser className="size-4" aria-hidden="true" />
-          Use the demo account
-        </button>
-        <p className="flex items-center gap-3 text-xs text-zinc-500 before:h-px before:flex-1 before:bg-zinc-200 after:h-px after:flex-1 after:bg-zinc-200 dark:before:bg-zinc-800 dark:after:bg-zinc-800">
-          or enter a demo user
-        </p>
         <Form method="post" ref={formRef} className="space-y-4" noValidate>
           <div>
             <label
@@ -101,9 +100,10 @@ function SignInForm({ expired }: { expired: boolean }) {
               name="username"
               autoComplete="username"
               autoCapitalize="none"
+              spellCheck={false}
               className="field"
               aria-invalid={result?.error ? true : undefined}
-              aria-describedby={result?.error ? 'sign-in-error' : 'demo-hint'}
+              aria-describedby={result?.error ? 'sign-in-error' : undefined}
             />
           </div>
           <div>
@@ -113,16 +113,37 @@ function SignInForm({ expired }: { expired: boolean }) {
             >
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              className="field"
-              aria-invalid={result?.error ? true : undefined}
-            />
+            {/* The toggle sits next to the input, not inside it, so password
+                manager icons at the input's right edge stay uncovered. */}
+            <div className="flex">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                autoCapitalize="none"
+                spellCheck={false}
+                className="field rounded-r-none"
+                aria-invalid={result?.error ? true : undefined}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-pressed={showPassword}
+                aria-controls="password"
+                aria-label="Show password"
+                title={showPassword ? 'Hide password' : 'Show password'}
+                className="flex w-12 shrink-0 cursor-pointer items-center justify-center rounded-r-xl bg-zinc-50 text-zinc-600 ring-1 ring-zinc-300 ring-inset hover:bg-zinc-100 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-300 dark:ring-zinc-700 dark:hover:bg-zinc-700"
+              >
+                {showPassword ? (
+                  <LuEyeOff className="size-5" />
+                ) : (
+                  <LuEye className="size-5" />
+                )}
+              </button>
+            </div>
           </div>
-          {result?.error ? (
+          {result?.error && (
             <p
               id="sign-in-error"
               role="alert"
@@ -130,23 +151,27 @@ function SignInForm({ expired }: { expired: boolean }) {
             >
               {result.error}
             </p>
-          ) : (
-            <p
-              id="demo-hint"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
-            >
-              Try <span className="font-mono">{DEMO_ACCOUNT.username}</span> /{' '}
-              <span className="font-mono">{DEMO_ACCOUNT.password}</span>.
-            </p>
           )}
           <button
             type="submit"
-            className="btn-secondary w-full"
+            className="btn-primary w-full"
             disabled={submitting}
           >
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </Form>
+        <p className="flex items-center gap-3 text-xs text-zinc-500 before:h-px before:flex-1 before:bg-zinc-200 after:h-px after:flex-1 after:bg-zinc-200 dark:before:bg-zinc-800 dark:after:bg-zinc-800">
+          or
+        </p>
+        <button
+          type="button"
+          className="btn-secondary w-full"
+          onClick={useDemoAccount}
+          disabled={submitting}
+        >
+          <LuUser className="size-4" aria-hidden="true" />
+          Use the demo account
+        </button>
       </div>
     </div>
   );
