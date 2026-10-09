@@ -1,7 +1,8 @@
 import { murmur2 } from 'murmurhash-js';
 
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 
+const API_URL = 'https://fakestoreapi.com';
 const MAX_UINT_32 = 4_294_967_295;
 const DISCOUNT_PROBABILITY = 0.25;
 const MIN_DISCOUNT = 10;
@@ -34,7 +35,7 @@ export const fetchProducts = async (
   count: number,
   category?: string
 ): Promise<Product[]> => {
-  const baseUrl = process.env.API_URL;
+  const baseUrl = API_URL;
   if (!baseUrl) {
     throw new Error('API_URL is not defined');
   }
@@ -60,7 +61,7 @@ export const fetchProducts = async (
 export const fetchProduct = async (id?: string) => {
   if (!id) return;
 
-  const baseUrl = process.env.API_URL;
+  const baseUrl = API_URL;
   if (!baseUrl) {
     throw new Error('API_URL is not defined');
   }
@@ -77,7 +78,7 @@ export const fetchProduct = async (id?: string) => {
 };
 
 export const fetchCategories = async () => {
-  const baseUrl = process.env.API_URL;
+  const baseUrl = API_URL;
   if (!baseUrl) {
     throw new Error('API_URL is not defined');
   }

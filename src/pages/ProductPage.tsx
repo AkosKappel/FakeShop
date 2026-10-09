@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { useParams, Link } from 'react-router';
 
 import Spinner from '../components/Spinner';
 import QuantityPicker from '../components/QuantityPicker';
 import StarsRating from '../components/StarsRating';
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 import { formatPrice, titleCase } from '../utils/helpers';
 import { useCart } from '../hooks/CartHooks';
 import { fetchProduct } from '../utils/dataFetch';
@@ -48,9 +47,8 @@ const ProductPage = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>{product?.title || 'FakeShop'}</title>
-      </Helmet>
+      <title>{product?.title || 'FakeShop'}</title>
+
       {loading || !product ? (
         <Spinner description="Loading product" loading={loading} />
       ) : (

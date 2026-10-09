@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import {
   FaUser,
   FaAddressCard,
@@ -10,8 +10,8 @@ import {
   FaLock,
   FaTruck,
 } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useForm, type FieldValues } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 
 const STORAGE_KEY = 'checkoutFormData';
@@ -46,7 +46,7 @@ const CheckoutPage = () => {
     }
   }, [setValue]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FieldValues) => {
     navigate('/checkout/summary', { state: data });
   };
 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import ProductsPage from './ProductsPage';
 import Carousel from '../components/Carousel';
 import Spinner from '../components/Spinner';
 import Hero from '../components/Hero';
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 import heroBg from '../assets/hero-bg.jpg';
 import { fetchProducts } from '../utils/dataFetch';
 
@@ -21,6 +21,13 @@ const HomePage = () => {
         setLoading(true);
         const data = await fetchProducts(count);
         setBestSellers(data);
+        // Select few random products as new arrivals
+        setNewArrivals(
+          data
+            .slice()
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3)
+        );
       } catch (error) {
         console.error(error);
       } finally {
@@ -30,16 +37,6 @@ const HomePage = () => {
 
     fetchBestsellers(10);
   }, []);
-
-  useEffect(() => {
-    // Select few random products as new arrivals
-    setNewArrivals(
-      bestSellers
-        .slice()
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-    );
-  }, [bestSellers]);
 
   return (
     <div>

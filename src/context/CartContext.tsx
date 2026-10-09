@@ -1,25 +1,8 @@
-import { createContext, useReducer, ReactNode, useEffect } from 'react';
-import {
-  CartItem,
-  CartState,
-  CartContextProps,
-  CartAction,
-} from '../types/Cart.interface';
+import { useReducer, useEffect, type ReactNode } from 'react';
+
+import { CartContext, initialCart } from './cart';
+import type { CartItem, CartState, CartAction } from '../types/Cart.interface';
 import { addProductDiscountPrice } from '../utils/dataFetch';
-
-const initialCart: CartState = {
-  items: [],
-  totalPrice: 0,
-  totalQuantity: 0,
-};
-
-export const CartContext = createContext<CartContextProps>({
-  cart: initialCart,
-  dispatch: () => null,
-  addToCart: () => {},
-  removeFromCart: () => {},
-  clearCart: () => {},
-});
 
 const calculateTotalPrice = (items: CartItem[]) => {
   return items.reduce(

@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
 import QuantityPicker from '../components/QuantityPicker';
 import { useCart } from '../hooks/CartHooks';
-import { CartItem } from '../types/Cart.interface';
+import type { CartItem } from '../types/Cart.interface';
 import { formatPrice } from '../utils/helpers';
 
 const CartPage = () => {

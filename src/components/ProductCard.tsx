@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { FaSearch } from 'react-icons/fa';
 
 import ModalImage from './ModalImage';
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 import { formatPrice, truncate } from '../utils/helpers';
 import { useCart } from '../hooks/CartHooks';
 
@@ -39,7 +39,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             title={product.title}
           />
           {isHovered && (
-            <div className="absolute inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50">
+            <div className="absolute inset-0 flex justify-center items-center bg-gray-800/50">
               <FaSearch className="text-white text-3xl" />
             </div>
           )}

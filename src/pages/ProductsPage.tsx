@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router';
 
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 import Spinner from '../components/Spinner';
 import ProductCard from '../components/ProductCard';
 import { titleCase } from '../utils/helpers';
@@ -36,9 +35,8 @@ const ProductsPage = ({ title, numberOfProducts = 20 }: ProductsPageProps) => {
 
   return (
     <div>
-      <Helmet>
-        <title>{titleCase(category) || title || 'Products'} | FakeShop</title>
-      </Helmet>
+      <title>{`${titleCase(category) || title || 'Products'} | FakeShop`}</title>
+
       {loading ? (
         <Spinner description="Loading products" loading={loading} />
       ) : (

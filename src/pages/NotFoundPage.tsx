@@ -1,5 +1,5 @@
 // src/pages/NotFoundPage.tsx
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 const NotFoundPage = () => {
   return (

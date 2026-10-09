@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router';
 import { FaShoppingCart, FaBars } from 'react-icons/fa';
 
 import { titleCase } from '../utils/helpers';

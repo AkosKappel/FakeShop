@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-import { Product } from '../types/Product.interface';
+import type { Product } from '../types/Product.interface';
 import { limitWords, formatPrice } from '../utils/helpers';
 
 interface CarouselProps {
@@ -60,7 +60,7 @@ const Carousel = ({
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 p-2"
+              className="shrink-0 p-2"
               style={{ width: `${100 / itemsPerView}%` }}
             >
               <div className="bg-white shadow-md rounded-lg flex flex-col justify-between h-full">

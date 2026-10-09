@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import ClipLoader from 'react-spinners/ClipLoader';
 
 interface SpinnerProps {
   loading: boolean;
@@ -18,8 +17,10 @@ const Spinner = ({ loading, description }: SpinnerProps) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-1/2-screen w-full">
-      <ClipLoader color="#000" loading={loading} size={150} />
+    <div className="flex flex-col items-center justify-center h-[50vh] w-full">
+      {loading && (
+        <div className="size-24 animate-spin rounded-full border-8 border-gray-300 border-t-gray-900" />
+      )}
       {description && (
         <div className="mt-4" style={{ minWidth: '140px' }}>
           <p>{`${description} ${dots}`}</p>

@@ -4,9 +4,8 @@ import {
   createRoutesFromElements,
   RouterProvider,
   Navigate,
-} from 'react-router-dom';
+} from 'react-router';
 
-import './App.css';
 import DefaultLayout from './layouts/DefaultLayout';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
