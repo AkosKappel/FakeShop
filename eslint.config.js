@@ -18,5 +18,12 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Route modules export their loader and action next to the page.
+      'react-refresh/only-export-components': [
+        'error',
+        { allowExportNames: ['loader', 'action'] },
+      ],
+    },
   },
 ]);

@@ -66,6 +66,17 @@ export const router = createBrowserRouter(
               }),
               lazy: lazyPage(() => import('./pages/ComparePage')),
             },
+            {
+              path: 'account',
+              lazy: () =>
+                import('./pages/AccountPage').then(
+                  ({ default: Component, loader, action }) => ({
+                    Component,
+                    loader,
+                    action,
+                  })
+                ),
+            },
             { path: 'cart', element: <CartPage /> },
             {
               path: 'checkout',

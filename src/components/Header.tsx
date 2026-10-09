@@ -7,11 +7,13 @@ import {
   LuMoon,
   LuShoppingBag,
   LuSun,
+  LuUser,
   LuX,
 } from 'react-icons/lu';
 
 import Logo from './Logo';
 import SearchBox from './SearchBox';
+import { useSession } from '../lib/auth';
 import { useCart } from '../lib/cart';
 import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
 import { pluralize } from '../lib/format';
@@ -211,6 +213,7 @@ export default function Header() {
   const { count } = useCart();
   const wishlistCount = useWishlist().length;
   const compareCount = useCompare().length;
+  const session = useSession();
   const { pathname, search } = useLocation();
 
   return (
@@ -223,6 +226,24 @@ export default function Header() {
         </div>
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
+          <Link
+            to="/account"
+            className="btn-icon"
+            aria-label={
+              session ? `Account of ${session.user.firstName}` : 'Sign in'
+            }
+            title={session ? 'Your account' : 'Sign in'}
+          >
+            {session ? (
+              <img
+                src={session.user.image}
+                alt=""
+                className="size-7 rounded-full bg-zinc-200 ring-2 ring-brand-500 dark:bg-zinc-700"
+              />
+            ) : (
+              <LuUser className="size-5" />
+            )}
+          </Link>
           <Link
             to="/wishlist"
             className="btn-icon relative"

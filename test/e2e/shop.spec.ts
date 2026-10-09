@@ -218,6 +218,57 @@ test('compare products side by side', async ({ page }) => {
   await expect(page.getByRole('columnheader')).toHaveCount(1);
 });
 
+test('demo sign-in fills the checkout and keeps no sensitive data', async ({
+  page,
+}) => {
+  await page.goto('account');
+  await page.getByLabel('Username').fill('emilys');
+  await page.getByLabel('Password', { exact: true }).fill('wrong');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('alert')).toHaveText(
+    'Wrong username or password'
+  );
+
+  await page.getByRole('button', { name: 'Use the demo account' }).click();
+  await expect(page.getByRole('heading', { name: 'Hi, Emily' })).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Account of Emily' })
+  ).toBeVisible();
+  await expectNoA11yViolations(page);
+
+  const storage = await page.evaluate(() =>
+    JSON.stringify({ ...localStorage })
+  );
+  expect(storage).not.toContain('900-590-289');
+  expect(storage).not.toContain('emilyspass');
+
+  await page.goto('products/1');
+  await page.getByRole('button', { name: 'Add to cart' }).click();
+  await page.goto('checkout');
+  await expect(page.getByLabel('Email')).toHaveValue(
+    'emily.johnson@x.dummyjson.com'
+  );
+  await expect(page.getByLabel('Country')).toHaveValue('US');
+
+  await page.goto('account');
+  await page.getByRole('button', { name: 'Sign out' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Use the demo account' })
+  ).toBeVisible();
+});
+
+test('an expired session signs out', async ({ page }) => {
+  await page.goto('./');
+  await page.evaluate(() =>
+    localStorage.setItem(
+      'fakeshop:session',
+      JSON.stringify({ accessToken: 'old', user: { firstName: 'Emily' } })
+    )
+  );
+  await page.goto('account');
+  await expect(page.getByText('Your session has expired')).toBeVisible();
+});
+
 test('cart stays in sync across tabs', async ({ page, context }) => {
   await page.goto('cart');
   const other = await context.newPage();

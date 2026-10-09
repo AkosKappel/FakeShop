@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { LuCheck, LuLock, LuShoppingBag } from 'react-icons/lu';
 
 import EmptyState from '../components/EmptyState';
+import { useSession, type User } from '../lib/auth';
 import OrderSummary from '../components/OrderSummary';
 import { cart, useCart } from '../lib/cart';
 import {
@@ -66,6 +67,19 @@ function defaultCountry(): string {
     // Unknown locale, use the default below.
   }
   return 'US';
+}
+
+function accountAddress(user?: User): Partial<ShippingAddress> {
+  if (!user) return {};
+  const country = COUNTRIES.find((c) => c.name === user.address.country);
+  return {
+    email: user.email,
+    fullName: `${user.firstName} ${user.lastName}`,
+    address: user.address.address,
+    city: user.address.city,
+    zip: user.address.postalCode,
+    ...(country && { country: country.code }),
+  };
 }
 
 function Field({
@@ -155,6 +169,7 @@ export default function CheckoutPage() {
   const { lines } = useCart();
   const promoCode = useStore(promoStore) ?? undefined;
   const savedAddress = useStore(addressStore);
+  const session = useSession();
 
   const {
     register,
@@ -172,6 +187,7 @@ export default function CheckoutPage() {
       zip: '',
       country: defaultCountry(),
       ...savedAddress,
+      ...accountAddress(session?.user),
       delivery: 'standard',
       cardNumber: '',
       expiry: '',
@@ -248,9 +264,20 @@ export default function CheckoutPage() {
       >
         <div className="space-y-6">
           <section className={section} aria-labelledby="contact-heading">
-            <h2 id="contact-heading" className={sectionTitle}>
-              Contact and delivery address
-            </h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="contact-heading" className={sectionTitle}>
+                Contact and delivery address
+              </h2>
+              {session ? (
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  Filled in from your account
+                </p>
+              ) : (
+                <Link to="/account?next=/checkout" className="link text-sm">
+                  Sign in to fill this in
+                </Link>
+              )}
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label="Email"
