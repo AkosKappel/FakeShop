@@ -207,7 +207,7 @@ function ProductDetails({
             { label: product.title },
           ]}
         />
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
           <Gallery product={product} />
 
           <div className="space-y-6">
@@ -267,7 +267,9 @@ function ProductDetails({
                   label="Quantity to add"
                 />
               )}
-              <div className="hidden flex-1 sm:flex">{addButton}</div>
+              <div className="hidden flex-1 sm:flex md:order-last md:basis-full lg:order-none lg:basis-auto">
+                {addButton}
+              </div>
               <WishlistButton
                 productId={product.id}
                 title={product.title}
@@ -369,7 +371,7 @@ function ProductSkeleton() {
     <div className="animate-pulse" aria-busy="true">
       <span className="sr-only">Loading product</span>
       <div className={`mb-4 h-4 w-64 ${block}`} />
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
         <div className="aspect-square rounded-3xl bg-zinc-200 dark:bg-zinc-800" />
         <div className="space-y-4">
           <div className={`h-4 w-24 ${block}`} />

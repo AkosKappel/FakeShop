@@ -127,7 +127,10 @@ export default function HomePage() {
 
       <ul className="grid gap-4 sm:grid-cols-3">
         {PERKS.map(({ icon: Icon, title, text }) => (
-          <li key={title} className="card flex items-center gap-4 p-5">
+          <li
+            key={title}
+            className="card flex items-center gap-4 p-5 sm:flex-col sm:items-start lg:flex-row lg:items-center"
+          >
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400">
               <Icon className="size-5" aria-hidden="true" />
             </span>
