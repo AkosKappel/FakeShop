@@ -1,6 +1,8 @@
 import { Suspense, use, useEffect, useRef, useState } from 'react';
 import { Link, useLoaderData, useParams } from 'react-router';
 import {
+  LuChevronLeft,
+  LuChevronRight,
   LuPackage,
   LuRotateCcw,
   LuShare2,
@@ -33,6 +35,7 @@ import {
 } from '../lib/format';
 import { markViewed, pickByIds, useRecentlyViewed } from '../lib/lists';
 import { toast } from '../lib/toast';
+import { useDragScroll } from '../lib/useDragScroll';
 
 interface LoaderData {
   product: Promise<Product>;
@@ -70,45 +73,112 @@ async function share(product: Product) {
 
 function Gallery({ product }: { product: Product }) {
   const [selected, setSelected] = useState(0);
+  const [stripRef, attachStrip] = useDragScroll<HTMLUListElement>();
   const zoomRef = useRef<HTMLDialogElement>(null);
   const images =
     product.images.length > 0 ? product.images : [product.thumbnail];
-  const image = images[Math.min(selected, images.length - 1)];
+  const count = images.length;
+
+  const goTo = (index: number) => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    strip.scrollTo({
+      left: Math.max(0, Math.min(index, count - 1)) * strip.clientWidth,
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    });
+  };
+
+  const arrow =
+    'btn-icon absolute top-1/2 z-10 -translate-y-1/2 bg-white/90 text-zinc-900 shadow-md hover:bg-white disabled:pointer-events-none disabled:opacity-0 dark:text-zinc-900';
 
   return (
     <div className="space-y-3">
-      <button
-        type="button"
-        className="image-tile relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-3xl"
-        onClick={() => zoomRef.current?.showModal()}
-        aria-label="Enlarge image"
-      >
-        <img
-          src={image}
-          alt={product.title}
-          width={600}
-          height={600}
-          fetchPriority="high"
-          style={{ viewTransitionName: productImageTransition(product.id) }}
-          className="size-full object-contain p-6"
-        />
+      <div className="relative">
+        {/* A swipeable strip: native scrolling on touch, drag with a mouse, arrows and thumbnails. */}
+        <ul
+          ref={attachStrip}
+          aria-label="Product images"
+          onScroll={(event) => {
+            const strip = event.currentTarget;
+            setSelected(Math.round(strip.scrollLeft / strip.clientWidth));
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowRight') goTo(selected + 1);
+            if (event.key === 'ArrowLeft') goTo(selected - 1);
+          }}
+          className="image-tile flex aspect-square snap-x snap-mandatory overflow-x-auto overflow-y-hidden rounded-3xl [scrollbar-width:none] pointer-fine:cursor-grab data-dragging:cursor-grabbing"
+        >
+          {images.map((src, index) => (
+            <li key={src} className="flex basis-full shrink-0 snap-center">
+              <button
+                type="button"
+                className="size-full cursor-zoom-in rounded-3xl focus-visible:-outline-offset-4"
+                onClick={() => zoomRef.current?.showModal()}
+                aria-label={`Enlarge image ${index + 1} of ${count}`}
+              >
+                <img
+                  src={src}
+                  alt={index === 0 ? product.title : ''}
+                  width={600}
+                  height={600}
+                  fetchPriority={index === 0 ? 'high' : 'auto'}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  draggable={false}
+                  style={{
+                    viewTransitionName:
+                      index === 0
+                        ? productImageTransition(product.id)
+                        : undefined,
+                  }}
+                  className="size-full object-contain"
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
         {isOnSale(product) && (
-          <span className="absolute top-4 left-4 rounded-full bg-brand-600 px-3 py-1 text-sm font-bold text-white">
+          <span className="pointer-events-none absolute top-4 left-4 rounded-full bg-brand-600 px-3 py-1 text-sm font-bold text-white">
             −{formatPercent(product.discountPercentage)}
           </span>
         )}
-      </button>
-      {images.length > 1 && (
+        {count > 1 && (
+          <>
+            <button
+              type="button"
+              className={`${arrow} left-3`}
+              onClick={() => goTo(selected - 1)}
+              disabled={selected === 0}
+              aria-label="Previous image"
+            >
+              <LuChevronLeft className="size-5" />
+            </button>
+            <button
+              type="button"
+              className={`${arrow} right-3`}
+              onClick={() => goTo(selected + 1)}
+              disabled={selected >= count - 1}
+              aria-label="Next image"
+            >
+              <LuChevronRight className="size-5" />
+            </button>
+            <p className="pointer-events-none absolute right-4 bottom-4 rounded-full bg-zinc-900/70 px-2.5 py-1 text-xs font-semibold text-white tabular-nums">
+              {selected + 1} / {count}
+            </p>
+          </>
+        )}
+      </div>
+      {count > 1 && (
         <ul
-          className="flex gap-3 overflow-x-auto pb-1"
-          aria-label="Product images"
+          className="flex gap-3 overflow-x-auto p-1"
+          aria-label="Choose an image"
         >
           {images.map((src, index) => (
             <li key={src} className="shrink-0">
               <button
                 type="button"
-                onClick={() => setSelected(index)}
-                aria-label={`Show image ${index + 1} of ${images.length}`}
+                onClick={() => goTo(index)}
+                aria-label={`Show image ${index + 1} of ${count}`}
                 aria-current={index === selected}
                 className="image-tile size-20 cursor-pointer overflow-hidden rounded-xl ring-2 ring-transparent aria-[current=true]:ring-brand-600"
               >
@@ -116,7 +186,7 @@ function Gallery({ product }: { product: Product }) {
                   src={src}
                   alt=""
                   loading="lazy"
-                  className="size-full object-contain p-1.5"
+                  className="size-full object-contain"
                 />
               </button>
             </li>
@@ -130,7 +200,7 @@ function Gallery({ product }: { product: Product }) {
         className="m-auto max-h-[92dvh] max-w-[92vw] overflow-hidden rounded-3xl bg-white p-0 backdrop:bg-zinc-950/80"
       >
         <img
-          src={image}
+          src={images[selected]}
           alt={product.title}
           className="max-h-[92dvh] w-auto object-contain"
         />
@@ -388,7 +458,7 @@ function ProductSkeleton({ id }: { id: string }) {
               src={summary.thumbnail}
               alt=""
               style={{ viewTransitionName: productImageTransition(summary.id) }}
-              className="size-full object-contain p-6"
+              className="size-full object-contain"
             />
           </div>
         ) : (

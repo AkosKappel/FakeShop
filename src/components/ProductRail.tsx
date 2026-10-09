@@ -1,8 +1,9 @@
-import { useRef, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
 import ProductCard from './ProductCard';
 import type { ProductSummary } from '../lib/api';
+import { useDragScroll } from '../lib/useDragScroll';
 
 interface ProductRailProps {
   title: string;
@@ -16,7 +17,7 @@ export default function ProductRail({
   products,
   action,
 }: ProductRailProps) {
-  const listRef = useRef<HTMLUListElement>(null);
+  const [listRef, attachList] = useDragScroll<HTMLUListElement>();
   const headingId = `rail-${title.toLowerCase().replace(/\W+/g, '-')}`;
 
   if (products.length === 0) return null;
@@ -60,8 +61,8 @@ export default function ProductRail({
         </div>
       </div>
       <ul
-        ref={listRef}
-        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:gap-5"
+        ref={attachList}
+        className="-mx-4 flex snap-x snap-mandatory pointer-fine:cursor-grab data-dragging:cursor-grabbing data-dragging:select-none scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:gap-5"
       >
         {products.map((product) => (
           <li
