@@ -56,7 +56,12 @@ export default function HomePage() {
   const recent = pickByIds(catalog, useRecentlyViewed());
 
   const deals = topBy(catalog.filter(isOnSale), (p) => p.discountPercentage);
-  const topRated = topBy(catalog, (p) => p.rating);
+  // No product in two rails: a shared image name would cancel the view transition.
+  const dealIds = new Set(deals.map((p) => p.id));
+  const topRated = topBy(
+    catalog.filter((p) => !dealIds.has(p.id)),
+    (p) => p.rating
+  );
   const heroProducts = HERO_CATEGORIES.flatMap((category) =>
     topBy(
       catalog.filter((p) => p.category === category),

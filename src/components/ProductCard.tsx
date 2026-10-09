@@ -1,10 +1,10 @@
-import { Link } from 'react-router';
+import { Link, useViewTransitionState } from 'react-router';
 import { LuShoppingBag } from 'react-icons/lu';
 
 import Price from './Price';
 import Rating from './Rating';
 import WishlistButton from './WishlistButton';
-import type { ProductSummary } from '../lib/api';
+import { productImageTransition, type ProductSummary } from '../lib/api';
 import { addToCartWithToast } from '../lib/cart';
 import { categoryName, isOnSale } from '../lib/catalog';
 import { formatPercent } from '../lib/format';
@@ -18,6 +18,8 @@ interface ProductCardProps {
 export default function ProductCard({ product, priority }: ProductCardProps) {
   const soldOut = product.stock <= 0;
   const lowStock = !soldOut && product.stock <= 5;
+  const href = `/products/${product.id}`;
+  const opening = useViewTransitionState(href);
 
   return (
     <article className="card group relative flex w-full flex-col overflow-hidden transition-shadow hover:shadow-lg">
@@ -29,6 +31,11 @@ export default function ProductCard({ product, priority }: ProductCardProps) {
           height={300}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          style={{
+            viewTransitionName: opening
+              ? productImageTransition(product.id)
+              : undefined,
+          }}
           className="size-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
         />
         {isOnSale(product) && (
@@ -48,7 +55,7 @@ export default function ProductCard({ product, priority }: ProductCardProps) {
         </p>
         <h3 className="line-clamp-2 leading-snug font-semibold">
           <Link
-            to={`/products/${product.id}`}
+            to={href}
             viewTransition
             className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:rounded-2xl after:focus-visible:outline-2 after:focus-visible:outline-brand-500"
           >

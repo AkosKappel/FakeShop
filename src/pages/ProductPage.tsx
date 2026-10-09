@@ -16,7 +16,12 @@ import ProductRail from '../components/ProductRail';
 import QuantityPicker from '../components/QuantityPicker';
 import Rating from '../components/Rating';
 import WishlistButton from '../components/WishlistButton';
-import type { Product, ProductSummary } from '../lib/api';
+import {
+  peekProduct,
+  productImageTransition,
+  type Product,
+  type ProductSummary,
+} from '../lib/api';
 import { addToCartWithToast, maxQuantity, useCart } from '../lib/cart';
 import { categoryName, finalPrice, isOnSale } from '../lib/catalog';
 import {
@@ -38,7 +43,7 @@ export default function ProductPage() {
   const { id } = useParams();
   return (
     // The key shows the skeleton again when moving from one product to another.
-    <Suspense key={id} fallback={<ProductSkeleton />}>
+    <Suspense key={id} fallback={<ProductSkeleton id={id!} />}>
       <ProductDetails productPromise={product} catalogPromise={catalog} />
     </Suspense>
   );
@@ -83,6 +88,7 @@ function Gallery({ product }: { product: Product }) {
           width={600}
           height={600}
           fetchPriority="high"
+          style={{ viewTransitionName: productImageTransition(product.id) }}
           className="size-full object-contain p-6"
         />
         {isOnSale(product) && (
@@ -365,19 +371,44 @@ function ProductDetails({
   );
 }
 
-function ProductSkeleton() {
-  const block = 'rounded-lg bg-zinc-200 dark:bg-zinc-800';
+/** Shows what the cached catalog already knows (photo, title, price) while the details load. */
+function ProductSkeleton({ id }: { id: string }) {
+  const summary = peekProduct(id);
+  const block = 'animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-800';
   return (
-    <div className="animate-pulse" aria-busy="true">
+    <div aria-busy="true">
       <span className="sr-only">Loading product</span>
       <div className={`mb-4 h-4 w-64 ${block}`} />
       <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
-        <div className="aspect-square rounded-3xl bg-zinc-200 dark:bg-zinc-800" />
+        {summary ? (
+          <div className="image-tile aspect-square rounded-3xl">
+            <img
+              src={summary.thumbnail}
+              alt=""
+              style={{ viewTransitionName: productImageTransition(summary.id) }}
+              className="size-full object-contain p-6"
+            />
+          </div>
+        ) : (
+          <div className={`aspect-square rounded-3xl ${block}`} />
+        )}
         <div className="space-y-4">
           <div className={`h-4 w-24 ${block}`} />
-          <div className={`h-10 w-4/5 ${block}`} />
-          <div className={`h-5 w-40 ${block}`} />
-          <div className={`h-9 w-32 ${block}`} />
+          {summary ? (
+            <>
+              <p className="text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
+                {summary.title}
+              </p>
+              <div className={`h-5 w-40 ${block}`} />
+              <Price product={summary} size="lg" />
+            </>
+          ) : (
+            <>
+              <div className={`h-10 w-4/5 ${block}`} />
+              <div className={`h-5 w-40 ${block}`} />
+              <div className={`h-9 w-32 ${block}`} />
+            </>
+          )}
           <div className={`h-24 w-full ${block}`} />
           <div className={`h-11 w-full rounded-full ${block}`} />
         </div>

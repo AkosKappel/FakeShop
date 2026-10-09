@@ -74,12 +74,23 @@ function getJson<T>(path: string): Promise<T> {
 
 // The whole catalog is about 8 kB gzipped, so lists, search, filters and
 // paging all run on one cached request.
+let loadedCatalog: ProductSummary[] | undefined;
+
 export async function getCatalog(): Promise<ProductSummary[]> {
   const data = await getJson<{ products: ProductSummary[] }>(
     `/products?limit=0&select=${SUMMARY_FIELDS}`
   );
+  loadedCatalog = data.products;
   return data.products;
 }
+
+/** The product's summary if the catalog has already loaded, without waiting. */
+export function peekProduct(id: string | number): ProductSummary | undefined {
+  return loadedCatalog?.find((product) => String(product.id) === String(id));
+}
+
+/** Shared name, so the card image morphs into the product page image. */
+export const productImageTransition = (id: number) => `product-image-${id}`;
 
 export function getProduct(id: string | number): Promise<Product> {
   return getJson<Product>(`/products/${encodeURIComponent(id)}`);
