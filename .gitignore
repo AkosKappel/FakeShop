@@ -30,3 +30,7 @@ BACKLOG.md
 # Tests
 test-results/
 playwright-report/
+
+# Lighthouse CI
+.lighthouseci/
+lighthouse-report/
