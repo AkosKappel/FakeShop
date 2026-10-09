@@ -15,7 +15,7 @@ import SearchBox from './SearchBox';
 import { useCart } from '../lib/cart';
 import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
 import { pluralize } from '../lib/format';
-import { useWishlist } from '../lib/lists';
+import { useCompare, useWishlist } from '../lib/lists';
 import { setTheme, useTheme } from '../lib/theme';
 
 const NAV_LINKS = [
@@ -179,6 +179,15 @@ function MobileMenu() {
               ))}
               <li>
                 <Link
+                  to="/compare"
+                  onClick={close}
+                  className="block rounded-lg px-2 py-2 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  Compare
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/orders"
                   onClick={close}
                   className="block rounded-lg px-2 py-2 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -201,6 +210,7 @@ function MobileMenu() {
 export default function Header() {
   const { count } = useCart();
   const wishlistCount = useWishlist().length;
+  const compareCount = useCompare().length;
   const { pathname, search } = useLocation();
 
   return (
@@ -249,9 +259,17 @@ export default function Header() {
             {link.label}
           </Link>
         ))}
+        {compareCount > 0 && (
+          <NavLink
+            to="/compare"
+            className="ml-auto rounded-full px-3 py-1.5 font-semibold text-zinc-600 hover:bg-zinc-100 aria-[current=page]:text-brand-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:aria-[current=page]:text-brand-400"
+          >
+            Compare ({compareCount})
+          </NavLink>
+        )}
         <NavLink
           to="/orders"
-          className="ml-auto rounded-full px-3 py-1.5 font-semibold text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          className={`${compareCount > 0 ? '' : 'ml-auto'} rounded-full px-3 py-1.5 font-semibold text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800`}
         >
           Your orders
         </NavLink>

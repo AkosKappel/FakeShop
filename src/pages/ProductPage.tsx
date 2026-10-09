@@ -11,6 +11,7 @@ import {
 } from 'react-icons/lu';
 
 import Breadcrumbs from '../components/Breadcrumbs';
+import CompareButton from '../components/CompareButton';
 import Price from '../components/Price';
 import ProductRail from '../components/ProductRail';
 import QuantityPicker from '../components/QuantityPicker';
@@ -281,6 +282,7 @@ function ProductDetails({
                 title={product.title}
                 className="btn-icon size-11 ring-1 ring-zinc-300 dark:ring-zinc-700"
               />
+              <CompareButton productId={product.id} title={product.title} />
               <button
                 type="button"
                 className="btn-icon size-11 ring-1 ring-zinc-300 dark:ring-zinc-700"

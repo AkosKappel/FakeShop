@@ -202,6 +202,22 @@ test('wishlist saves products', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('compare products side by side', async ({ page }) => {
+  for (const id of [1, 2]) {
+    await page.goto(`products/${id}`);
+    await page.getByRole('button', { name: /^Compare / }).click();
+    await expect(
+      page.getByRole('button', { name: /^Compare / })
+    ).toHaveAttribute('aria-pressed', 'true');
+  }
+  await page.goto('compare');
+  await expect(page.getByRole('columnheader')).toHaveCount(2);
+  await expect(page.getByRole('rowheader', { name: 'Price' })).toBeVisible();
+  await expectNoA11yViolations(page);
+  await page.getByRole('button', { name: /^Remove Essence Mascara/ }).click();
+  await expect(page.getByRole('columnheader')).toHaveCount(1);
+});
+
 test('cart stays in sync across tabs', async ({ page, context }) => {
   await page.goto('cart');
   const other = await context.newPage();

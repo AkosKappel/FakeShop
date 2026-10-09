@@ -2,7 +2,8 @@ import type { ComponentType } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router';
 
 import Layout from './layouts/Layout';
-import { getCatalog, getProduct } from './lib/api';
+import { getCatalog, getProduct, getProducts } from './lib/api';
+import { compareStore } from './lib/lists';
 import CartPage from './pages/CartPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ErrorPage from './pages/ErrorPage';
@@ -57,6 +58,13 @@ export const router = createBrowserRouter(
               path: 'wishlist',
               element: <WishlistPage />,
               loader: catalogLoader,
+            },
+            {
+              path: 'compare',
+              loader: async () => ({
+                products: await getProducts(compareStore.get()),
+              }),
+              lazy: lazyPage(() => import('./pages/ComparePage')),
             },
             { path: 'cart', element: <CartPage /> },
             {

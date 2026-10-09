@@ -18,6 +18,7 @@ const COLUMNS = [
     links: [
       { to: '/cart', label: 'Cart' },
       { to: '/wishlist', label: 'Wishlist' },
+      { to: '/compare', label: 'Compare' },
       { to: '/orders', label: 'Orders' },
     ],
   },

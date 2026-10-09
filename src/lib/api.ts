@@ -96,6 +96,10 @@ export function getProduct(id: string | number): Promise<Product> {
   return getJson<Product>(`/products/${encodeURIComponent(id)}`);
 }
 
+export function getProducts(ids: number[]): Promise<Product[]> {
+  return Promise.all(ids.map((id) => getProduct(id)));
+}
+
 export function isNotFound(error: unknown): boolean {
   return error instanceof ApiError && [400, 404].includes(error.status);
 }

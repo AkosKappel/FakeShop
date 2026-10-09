@@ -38,3 +38,16 @@ export function pickByIds<T extends { id: number }>(
   const byId = new Map(items.map((item) => [item.id, item]));
   return ids.flatMap((id) => byId.get(id) ?? []);
 }
+
+export const MAX_COMPARE = 3;
+export const compareStore = createLocalStore<number[]>('fakeshop:compare', []);
+
+export function useCompare() {
+  return useStore(compareStore);
+}
+
+/** Adds or removes an id, refusing to grow past `max`. */
+export function toggleId(ids: number[], id: number, max: number): number[] {
+  if (ids.includes(id)) return ids.filter((existing) => existing !== id);
+  return ids.length >= max ? ids : [...ids, id];
+}
