@@ -11,6 +11,7 @@ import {
   LuX,
 } from 'react-icons/lu';
 
+import CommandPalette from './CommandPalette';
 import Logo from './Logo';
 import SearchBox from './SearchBox';
 import { useSession } from '../lib/auth';
@@ -18,14 +19,8 @@ import { useCart } from '../lib/cart';
 import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
 import { pluralize } from '../lib/format';
 import { useCompare, useWishlist } from '../lib/lists';
+import { NAV_LINKS } from '../lib/navigation';
 import { setTheme, useTheme } from '../lib/theme';
-
-const NAV_LINKS = [
-  { to: '/products', label: 'All products' },
-  { to: '/products?sale=1&sort=discount', label: 'Deals' },
-  { to: '/products?sort=rating', label: 'Top rated' },
-  { to: '/about', label: 'About' },
-];
 
 function CountBadge({ count }: { count: number }) {
   if (count === 0) return null;
@@ -225,6 +220,7 @@ export default function Header() {
           <SearchBox />
         </div>
         <div className="ml-auto flex items-center gap-1">
+          <CommandPalette />
           <ThemeToggle />
           <Link
             to="/account"

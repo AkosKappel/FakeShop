@@ -149,14 +149,21 @@ function normalize(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
+/** Every word of the query appears in the text, ignoring case and accents. */
+export function matchesText(text: string, query: string): boolean {
+  const haystack = normalize(text);
+  return normalize(query)
+    .split(/\s+/)
+    .filter(Boolean)
+    .every((word) => haystack.includes(word));
+}
+
 /** Every word of the query must appear in the title, brand or category. */
 export function matchesQuery(product: ProductSummary, query: string): boolean {
-  const words = normalize(query).split(/\s+/).filter(Boolean);
-  if (words.length === 0) return true;
-  const haystack = normalize(
-    `${product.title} ${product.brand ?? ''} ${categoryName(product.category)}`
+  return matchesText(
+    `${product.title} ${product.brand ?? ''} ${categoryName(product.category)}`,
+    query
   );
-  return words.every((word) => haystack.includes(word));
 }
 
 export function applyFilters(

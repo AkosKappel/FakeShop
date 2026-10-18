@@ -25,6 +25,7 @@ FakeShop is a demo online store: search and filter 194 products, save favourites
 - Optional demo sign-in with DummyJSON accounts: a route action signs in, the token is checked and expires after an hour, and checkout fills in the account's address
 - Wishlist, recently viewed products and order history, saved in the browser and synced between open tabs
 - Light and dark theme (following the system or chosen, without a flash on load), loading skeletons, the product image morphing from card to page (View Transitions API), toasts, error pages with retry and a 404 page, installable as an app
+- Quick find (Ctrl+K or Cmd+K): jump to any page or category, or open a matching product, from the keyboard
 - Keyboard and screen reader friendly: labelled controls, native dialogs and popovers, focus moved to each new page (Lighthouse accessibility 100, checked in CI)
 
 | Search with filters                         | On a phone, dark theme                                            |
@@ -72,7 +73,7 @@ npm run dev
 ## Testing
 
 - **Unit tests** (`src/lib/*.test.ts`, Vitest): prices and discounts, URL filters, search, sorting and paging, cart rules (stock limits, merging, undo, tab sync) and checkout rules (card checksum, expiry, delivery costs, promo codes, business days).
-- **End-to-end tests** (`test/e2e`, Playwright): run on the production build in a desktop and a phone browser, with DummyJSON served from fixtures, so they are fast and stable. They cover search, filters, product pages, the cart with undo, promo codes, the full checkout (including a check that no card number reaches `localStorage`), the wishlist, comparison, demo sign-in (including a check that sensitive profile fields are not stored), tab sync, the theme, the mobile menu and 404 pages, with axe accessibility checks.
+- **End-to-end tests** (`test/e2e`, Playwright): run on the production build in a desktop and a phone browser, with DummyJSON served from fixtures, so they are fast and stable. They cover search, filters, product pages, the cart with undo, promo codes, the full checkout (including a check that no card number reaches `localStorage`), the wishlist, comparison, demo sign-in (including a check that sensitive profile fields are not stored), tab sync, the theme, the mobile menu, quick find and 404 pages, with axe accessibility checks.
 - **Lighthouse** (`lighthouserc.json`, Lighthouse CI): desktop runs on five pages. CI fails below 100 for accessibility, best practices and SEO, and below 85 for performance (it calls the live API); the reports are kept as a workflow artifact.
 
 ```bash
