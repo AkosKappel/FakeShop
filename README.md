@@ -84,7 +84,7 @@ npm run test:e2e
 
 ## Deployment
 
-Every push and pull request runs [the workflow](.github/workflows/deploy.yml): format check, lint, type check, unit tests, build, end-to-end tests and the Lighthouse budget. Pushes to `main` then deploy `dist` to GitHub Pages.
+Every push and pull request runs [the workflow](.github/workflows/deploy.yml). Three jobs run in parallel, each with its own build: format check, lint, type check and unit tests; end-to-end tests; and the Lighthouse budget. Pushes to `main` then deploy `dist` to GitHub Pages once all of them pass.
 
 ## License
 
