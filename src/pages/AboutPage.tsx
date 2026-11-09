@@ -401,7 +401,7 @@ export default function AboutPage() {
               Source code
             </a>
             <a
-              href="https://portfolio-taupe-eta-51.vercel.app/"
+              href="https://akoskappel.dev/"
               target="_blank"
               rel="noreferrer"
               className="btn-secondary"

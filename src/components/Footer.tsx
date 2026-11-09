@@ -44,7 +44,7 @@ const SOCIAL = [
     icon: LuLinkedin,
   },
   {
-    href: 'https://portfolio-taupe-eta-51.vercel.app/',
+    href: 'https://akoskappel.dev/',
     label: 'Portfolio of Ákos Kappel',
     icon: LuGlobe,
   },
