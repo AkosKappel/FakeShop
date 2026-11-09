@@ -1,4 +1,4 @@
 dist
-package-lock.json
+pnpm-lock.yaml
 BACKLOG.md
 .worktrees

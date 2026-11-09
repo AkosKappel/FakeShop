@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// End-to-end tests run against the production build (`npm run build` first),
+// End-to-end tests run against the production build (`pnpm build` first),
 // with the DummyJSON API served from test/e2e/fixtures.
 export default defineConfig({
   testDir: 'test/e2e',
@@ -18,7 +18,7 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: 'npx vite preview --port 4174 --strictPort',
+    command: 'pnpm exec vite preview --port 4174 --strictPort',
     url: 'http://localhost:4174/FakeShop/',
     reuseExistingServer: !process.env.CI,
   },

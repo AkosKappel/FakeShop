@@ -52,23 +52,23 @@ FakeShop is a demo online store: search and filter 194 products, save favourites
 
 ## Getting started
 
-Requires Node.js 24.
+Requires Node.js 24 and pnpm.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
-| Script               | What it does                                                    |
-| -------------------- | --------------------------------------------------------------- |
-| `npm run dev`        | Start the development server on http://localhost:5173/FakeShop/ |
-| `npm run lint`       | Lint the code with ESLint                                       |
-| `npm run typecheck`  | Type-check the project                                          |
-| `npm test`           | Run the unit tests                                              |
-| `npm run build`      | Type-check and build the static site into `dist`                |
-| `npm run test:e2e`   | Run the end-to-end tests against the build                      |
-| `npm run lighthouse` | Run Lighthouse on the build and check the score budget          |
-| `npm run format`     | Format the code with Prettier (`format:check` only checks)      |
+| Script            | What it does                                                    |
+| ----------------- | --------------------------------------------------------------- |
+| `pnpm dev`        | Start the development server on http://localhost:5173/FakeShop/ |
+| `pnpm lint`       | Lint the code with ESLint                                       |
+| `pnpm typecheck`  | Type-check the project                                          |
+| `pnpm test`       | Run the unit tests                                              |
+| `pnpm build`      | Type-check and build the static site into `dist`                |
+| `pnpm test:e2e`   | Run the end-to-end tests against the build                      |
+| `pnpm lighthouse` | Run Lighthouse on the build and check the score budget          |
+| `pnpm format`     | Format the code with Prettier (`format:check` only checks)      |
 
 ## Testing
 
@@ -77,9 +77,9 @@ npm run dev
 - **Lighthouse** (`lighthouserc.json`, Lighthouse CI): desktop runs on five pages. CI fails below 100 for accessibility, best practices and SEO, and below 85 for performance (it calls the live API); the reports are kept as a workflow artifact.
 
 ```bash
-npm run build
-npx playwright install chromium
-npm run test:e2e
+pnpm build
+pnpm exec playwright install chromium
+pnpm test:e2e
 ```
 
 ## Deployment
