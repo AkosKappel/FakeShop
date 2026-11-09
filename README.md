@@ -19,7 +19,7 @@ FakeShop is a demo online store: search and filter 194 products, save favourites
 
 - Search by name, brand or category with suggestions, then filter by price, rating, brand, stock and sale, and sort by price, rating or discount. Filters, sorting and the page number live in the URL, so any list can be shared
 - Product pages with an image gallery, zoom, stock status, shipping and return details, reviews and related products, plus a sticky add-to-cart bar on phones
-- Cart with stock-aware quantities, undo on remove, promo codes (`FAKE10`, `FREESHIP`) and a free delivery threshold
+- Cart with stock-aware quantities, undo on remove, promo codes (`FAKE10`, `FREESHIP`) and a free delivery threshold, plus a mini cart preview in the header (on hover, keyboard focus and after each add)
 - Checkout with browser autofill, card number checksum, expiry and security code checks, delivery dates in business days and a confirmation page. Card details are never stored; an order keeps only the last four digits
 - Compare up to three products side by side, with the best price, rating and weight highlighted
 - Optional demo sign-in with DummyJSON accounts: a route action signs in, the token is checked and expires after an hour, and checkout fills in the account's address

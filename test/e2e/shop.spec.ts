@@ -105,7 +105,9 @@ test('add to cart, change quantity, remove and undo', async ({ page }) => {
     'Your cart'
   );
   // 9.99 with 10.48% off is 8.94; two of them are 17.88.
-  await expect(page.getByText('$17.88').first()).toBeVisible();
+  await expect(
+    page.getByRole('main').getByText('$17.88').first()
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Increase quantity' }).click();
   await expect(cartLink(page)).toHaveAccessibleName('Cart, 3 items');

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import {
   LuChevronDown,
@@ -15,9 +15,9 @@ import CommandPalette from './CommandPalette';
 import Logo from './Logo';
 import SearchBox from './SearchBox';
 import { useSession } from '../lib/auth';
-import { useCart } from '../lib/cart';
+import { cartAdded, cartStore, useCart } from '../lib/cart';
 import { CATEGORY_GROUPS, categoryName } from '../lib/catalog';
-import { pluralize } from '../lib/format';
+import { formatPrice, pluralize } from '../lib/format';
 import { useCompare, useWishlist } from '../lib/lists';
 import { NAV_LINKS } from '../lib/navigation';
 import { setTheme, useTheme } from '../lib/theme';
@@ -126,6 +126,169 @@ function CategoryMenu() {
   );
 }
 
+const MINI_CART_LINES = 4;
+
+/**
+ * The header cart link with a preview popover: opens on mouse hover (with a
+ * short delay either way, so passing over it does nothing) and on keyboard
+ * focus, and flashes after an add. Touch has no hover, so a tap simply follows
+ * the link to the cart.
+ */
+function MiniCart() {
+  const { lines, count, subtotal, savings } = useCart();
+  const { pathname } = useLocation();
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const timer = useRef<number>(undefined);
+  // The cart and checkout pages already show everything the preview would.
+  const disabled = pathname === '/cart' || pathname === '/checkout';
+
+  const open = () => {
+    window.clearTimeout(timer.current);
+    const panel = panelRef.current;
+    const link = linkRef.current;
+    if (!panel || !link || disabled || cartStore.get().length === 0) return;
+    // The popover lives in the top layer; pin it under the link, right-aligned.
+    const rect = link.getBoundingClientRect();
+    panel.style.top = `${rect.bottom + 8}px`;
+    panel.style.right = `${Math.max(16, document.documentElement.clientWidth - rect.right)}px`;
+    if (!panel.matches(':popover-open')) panel.showPopover();
+  };
+
+  const close = () => {
+    window.clearTimeout(timer.current);
+    const panel = panelRef.current;
+    if (panel?.matches(':popover-open')) panel.hidePopover();
+  };
+
+  const later = (action: () => void, delay: number) => {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(action, delay);
+  };
+
+  const flash = useEffectEvent(() => {
+    if (!matchMedia('(hover: hover)').matches) return;
+    open();
+    later(close, 3000);
+  });
+  useEffect(() => cartAdded.subscribe(flash), []);
+
+  const onNavigate = useEffectEvent(close);
+  useEffect(() => onNavigate(), [pathname]);
+
+  return (
+    <div
+      onPointerEnter={(event) => {
+        if (event.pointerType === 'mouse') later(open, 150);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === 'mouse') later(close, 250);
+      }}
+      onFocus={() => window.clearTimeout(timer.current)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) close();
+      }}
+    >
+      <Link
+        ref={linkRef}
+        to="/cart"
+        className="btn-icon relative"
+        aria-label={`Cart, ${pluralize(count, 'item', 'items')}`}
+        onFocus={(event) => {
+          // Only keyboard focus: a tap or click focuses the link too, but navigates.
+          if (event.currentTarget.matches(':focus-visible')) open();
+        }}
+      >
+        <LuShoppingBag className="size-5" />
+        <CountBadge count={count} />
+      </Link>
+      <div
+        ref={panelRef}
+        popover="auto"
+        role="region"
+        aria-label="Cart preview"
+        onToggle={(event) => {
+          // Escape or an outside click hides it; don't leave focus inside.
+          if (
+            event.newState === 'closed' &&
+            event.currentTarget.contains(document.activeElement)
+          ) {
+            linkRef.current?.focus();
+          }
+        }}
+        onClick={(event) => {
+          if ((event.target as Element).closest('a')) close();
+        }}
+        className="card fixed inset-auto m-0 w-80 max-w-[calc(100vw-2rem)] p-4 shadow-2xl"
+      >
+        <p className="font-bold">
+          Your cart{' '}
+          <span className="font-normal text-zinc-500 dark:text-zinc-400">
+            ({pluralize(count, 'item', 'items')})
+          </span>
+        </p>
+        <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          {lines.slice(0, MINI_CART_LINES).map((line) => (
+            <li key={line.id} className="flex items-center gap-3 py-3">
+              <img
+                src={line.thumbnail}
+                alt=""
+                width={56}
+                height={56}
+                className="image-tile size-14 shrink-0 rounded-lg object-contain"
+              />
+              <div className="min-w-0 flex-1 text-sm">
+                <Link
+                  to={`/products/${line.id}`}
+                  className="line-clamp-2 font-semibold hover:underline"
+                >
+                  {line.title}
+                </Link>
+                <p className="text-zinc-500 dark:text-zinc-400">
+                  Qty {line.quantity}
+                </p>
+              </div>
+              <p className="text-sm font-semibold">
+                {formatPrice(line.price * line.quantity)}
+              </p>
+            </li>
+          ))}
+        </ul>
+        {lines.length > MINI_CART_LINES && (
+          <p className="pb-3 text-sm text-zinc-500 dark:text-zinc-400">
+            and{' '}
+            {pluralize(
+              lines.length - MINI_CART_LINES,
+              'more product',
+              'more products'
+            )}
+          </p>
+        )}
+        <dl className="space-y-1 border-t border-zinc-200 pt-3 text-sm dark:border-zinc-800">
+          <div className="flex justify-between font-bold">
+            <dt>Subtotal</dt>
+            <dd>{formatPrice(subtotal)}</dd>
+          </div>
+          {savings > 0 && (
+            <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
+              <dt>You save</dt>
+              <dd>{formatPrice(savings)}</dd>
+            </div>
+          )}
+        </dl>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Link to="/cart" className="btn-secondary">
+            View cart
+          </Link>
+          <Link to="/checkout" className="btn-primary">
+            Checkout
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MobileMenu() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const close = () => dialogRef.current?.close();
@@ -205,7 +368,6 @@ function MobileMenu() {
 }
 
 export default function Header() {
-  const { count } = useCart();
   const wishlistCount = useWishlist().length;
   const compareCount = useCompare().length;
   const session = useSession();
@@ -248,14 +410,7 @@ export default function Header() {
             <LuHeart className="size-5" />
             <CountBadge count={wishlistCount} />
           </Link>
-          <Link
-            to="/cart"
-            className="btn-icon relative"
-            aria-label={`Cart, ${pluralize(count, 'item', 'items')}`}
-          >
-            <LuShoppingBag className="size-5" />
-            <CountBadge count={count} />
-          </Link>
+          <MiniCart />
         </div>
       </div>
       <div className="px-4 pb-3 md:hidden">

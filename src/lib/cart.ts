@@ -1,6 +1,6 @@
 import type { ProductSummary } from './api';
 import { finalPrice } from './catalog';
-import { createLocalStore, useStore } from './store';
+import { createLocalStore, createStore, useStore } from './store';
 import { toast } from './toast';
 
 export const MAX_QUANTITY = 99;
@@ -125,8 +125,16 @@ export function addToCartWithToast(product: ProductSummary, quantity = 1) {
     return;
   }
   cart.add(product, quantity);
-  toast(`${product.title} added to your cart`, {
-    label: 'View cart',
-    to: '/cart',
-  });
+  announceAdded(`${product.title} added to your cart`);
+}
+
+/**
+ * Counts adds made in this tab, so the header can flash the mini cart. The
+ * cart store itself also changes on remove and on syncs from other tabs.
+ */
+export const cartAdded = createStore(0);
+
+function announceAdded(message: string) {
+  cartAdded.set((count) => count + 1);
+  toast(message, { label: 'View cart', to: '/cart' });
 }
