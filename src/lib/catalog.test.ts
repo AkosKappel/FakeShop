@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { ProductSummary } from './api';
 import {
   applyFilters,
+  boughtTogether,
   brandsOf,
   categoryName,
   finalPrice,
@@ -158,5 +159,46 @@ describe('paginate', () => {
   it('clamps pages past the end', () => {
     expect(paginate(items, 9, 24).page).toBe(3);
     expect(paginate([], 1, 24)).toEqual({ items: [], page: 1, pageCount: 1 });
+  });
+});
+
+describe('boughtTogether', () => {
+  const catalog = [
+    product({ id: 10, category: 'smartphones', rating: 4 }),
+    product({ id: 20, category: 'mobile-accessories', rating: 3 }),
+    product({ id: 21, category: 'mobile-accessories', rating: 5 }),
+    product({ id: 22, category: 'mobile-accessories', rating: 4 }),
+    product({ id: 23, category: 'mobile-accessories', rating: 1 }),
+    product({ id: 30, category: 'tablets', rating: 4 }),
+    product({ id: 31, category: 'tablets', rating: 5, stock: 0 }),
+    product({ id: 40, category: 'laptops', rating: 5 }),
+    product({ id: 50, category: 'groceries', rating: 5 }),
+  ];
+  const ids = (picks: ProductSummary[]) => picks.map((p) => p.id);
+
+  it('picks one in-stock product per complementary category', () => {
+    // Top three accessories by rating are 21, 22, 20; id 10 picks index 1.
+    expect(ids(boughtTogether(catalog[0], catalog))).toEqual([22, 30]);
+  });
+
+  it('rotates through the best rated by product id', () => {
+    const phone = product({ id: 12, category: 'smartphones' });
+    expect(ids(boughtTogether(phone, catalog))).toEqual([21, 30]);
+  });
+
+  it('tops up from the same category group', () => {
+    const laptop = catalog.find((p) => p.id === 40)!;
+    // Complements are accessories and bags (none here), then the Electronics group.
+    expect(ids(boughtTogether(laptop, catalog))).toEqual([22, 10]);
+  });
+
+  it('never suggests the product itself and returns at most two', () => {
+    const grocery = catalog.find((p) => p.id === 50)!;
+    expect(ids(boughtTogether(grocery, catalog))).toEqual([]);
+    for (const item of catalog) {
+      const picks = ids(boughtTogether(item, catalog));
+      expect(picks).not.toContain(item.id);
+      expect(picks.length).toBeLessThanOrEqual(2);
+    }
   });
 });

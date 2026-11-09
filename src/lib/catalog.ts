@@ -227,3 +227,73 @@ export function brandsOf(products: ProductSummary[]): string[] {
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([brand]) => brand);
 }
+
+// DummyJSON has no order history, so "bought together" pairs each category
+// with the categories people would plausibly shop alongside it.
+const COMPLEMENTS: Record<string, string[]> = {
+  smartphones: ['mobile-accessories', 'tablets'],
+  tablets: ['mobile-accessories', 'laptops'],
+  laptops: ['mobile-accessories', 'womens-bags'],
+  'mobile-accessories': ['smartphones', 'tablets'],
+  tops: ['womens-jewellery', 'sunglasses'],
+  'womens-dresses': ['womens-shoes', 'womens-bags'],
+  'womens-shoes': ['womens-dresses', 'womens-bags'],
+  'womens-bags': ['womens-jewellery', 'sunglasses'],
+  'womens-jewellery': ['womens-watches', 'womens-dresses'],
+  'womens-watches': ['womens-jewellery', 'womens-bags'],
+  'mens-shirts': ['mens-shoes', 'mens-watches'],
+  'mens-shoes': ['mens-shirts', 'sunglasses'],
+  'mens-watches': ['mens-shirts', 'sunglasses'],
+  sunglasses: ['skin-care', 'tops'],
+  furniture: ['home-decoration', 'kitchen-accessories'],
+  'home-decoration': ['furniture', 'kitchen-accessories'],
+  'kitchen-accessories': ['groceries', 'home-decoration'],
+  groceries: ['kitchen-accessories'],
+  beauty: ['skin-care', 'fragrances'],
+  fragrances: ['beauty', 'skin-care'],
+  'skin-care': ['beauty', 'fragrances'],
+  'sports-accessories': ['groceries', 'sunglasses'],
+  motorcycle: ['sunglasses', 'mobile-accessories'],
+  vehicle: ['mobile-accessories', 'sunglasses'],
+};
+
+export const BOUGHT_TOGETHER_COUNT = 2;
+const PICK_FROM_TOP = 3;
+
+/**
+ * Products to suggest alongside `product`: one from each complementary
+ * category, topped up from the rest of its category group. Within a category
+ * the pick rotates through the three best rated by product id, so neighbours
+ * get different suggestions but a page always shows the same ones.
+ */
+export function boughtTogether(
+  product: ProductSummary,
+  catalog: ProductSummary[]
+): ProductSummary[] {
+  const group = CATEGORY_GROUPS.find((g) =>
+    g.categories.includes(product.category)
+  );
+  const categories = [
+    ...(COMPLEMENTS[product.category] ?? []),
+    ...(group?.categories.filter((slug) => slug !== product.category) ?? []),
+    product.category,
+  ];
+  const picks: ProductSummary[] = [];
+  for (const category of new Set(categories)) {
+    if (picks.length === BOUGHT_TOGETHER_COUNT) break;
+    const candidates = catalog
+      .filter(
+        (p) =>
+          p.category === category &&
+          p.id !== product.id &&
+          p.stock > 0 &&
+          !picks.includes(p)
+      )
+      .sort((a, b) => b.rating - a.rating || a.id - b.id)
+      .slice(0, PICK_FROM_TOP);
+    if (candidates.length > 0) {
+      picks.push(candidates[product.id % candidates.length]);
+    }
+  }
+  return picks;
+}

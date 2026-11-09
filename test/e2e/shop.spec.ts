@@ -305,3 +305,19 @@ test('mobile menu opens and navigates', async ({ page }, testInfo) => {
   await expect(menu).toBeHidden();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Laptops');
 });
+
+test('frequently bought together adds all items', async ({ page }) => {
+  await page.goto('products/1');
+  const section = page.getByRole('region', {
+    name: 'Frequently bought together',
+  });
+  await expect(section.getByRole('listitem')).toHaveCount(3);
+  await expect(section).toContainText('This item: Essence Mascara');
+  await expectNoA11yViolations(page);
+
+  await section.getByRole('button', { name: 'Add all 3 to cart' }).click();
+  await expect(page.getByRole('status')).toContainText(
+    '3 products added to your cart'
+  );
+  await expect(cartLink(page)).toHaveAccessibleName('Cart, 3 items');
+});

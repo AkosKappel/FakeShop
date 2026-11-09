@@ -12,6 +12,7 @@ import {
   LuX,
 } from 'react-icons/lu';
 
+import BoughtTogether from '../components/BoughtTogether';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CompareButton from '../components/CompareButton';
 import Price from '../components/Price';
@@ -26,7 +27,12 @@ import {
   type ProductSummary,
 } from '../lib/api';
 import { addToCartWithToast, maxQuantity, useCart } from '../lib/cart';
-import { categoryName, finalPrice, isOnSale } from '../lib/catalog';
+import {
+  boughtTogether,
+  categoryName,
+  finalPrice,
+  isOnSale,
+} from '../lib/catalog';
 import {
   formatDate,
   formatPercent,
@@ -400,6 +406,13 @@ function ProductDetails({
           </div>
         </div>
       </div>
+
+      {!soldOut && (
+        <BoughtTogether
+          product={product}
+          suggestions={boughtTogether(product, catalog)}
+        />
+      )}
 
       <section
         id="reviews"

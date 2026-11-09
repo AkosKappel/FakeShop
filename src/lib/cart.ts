@@ -1,6 +1,7 @@
 import type { ProductSummary } from './api';
 import { finalPrice } from './catalog';
 import { createLocalStore, createStore, useStore } from './store';
+import { pluralize } from './format';
 import { toast } from './toast';
 
 export const MAX_QUANTITY = 99;
@@ -126,6 +127,24 @@ export function addToCartWithToast(product: ProductSummary, quantity = 1) {
   }
   cart.add(product, quantity);
   announceAdded(`${product.title} added to your cart`);
+}
+
+/** Adds one of each product that still has stock to spare. */
+export function addAllToCartWithToast(products: ProductSummary[]) {
+  const addable = products.filter(
+    (product) => cart.quantityOf(product.id) < maxQuantity(product.stock)
+  );
+  if (addable.length === 0) {
+    toast('You already have all available items in your cart', {
+      label: 'View cart',
+      to: '/cart',
+    });
+    return;
+  }
+  addable.forEach((product) => cart.add(product));
+  announceAdded(
+    `${pluralize(addable.length, 'product', 'products')} added to your cart`
+  );
 }
 
 /**
