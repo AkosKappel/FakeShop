@@ -2,18 +2,23 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { IconType } from 'react-icons';
 import {
+  LuCommand,
   LuFilter,
   LuGithub,
   LuGlobe,
   LuHeart,
+  LuImages,
   LuLinkedin,
   LuMoon,
   LuPackage,
+  LuPackagePlus,
+  LuPercent,
   LuRefreshCw,
   LuScale,
   LuSearch,
   LuShieldCheck,
   LuShoppingBag,
+  LuShoppingCart,
   LuSmartphone,
   LuTag,
   LuUser,
@@ -41,6 +46,31 @@ const FEATURES: { icon: IconType; title: string; text: string }[] = [
     icon: LuFilter,
     title: 'Filters you can share',
     text: 'Sort and filter by price, rating, brand, stock and sale. Every filter lives in the URL.',
+  },
+  {
+    icon: LuCommand,
+    title: 'Quick find',
+    text: 'Press Ctrl+K (Cmd+K on a Mac) to jump to any page, category or product from the keyboard.',
+  },
+  {
+    icon: LuPercent,
+    title: 'Deals',
+    text: 'Discounts of 10% and more show as sales; Deals lists them with the biggest discount first.',
+  },
+  {
+    icon: LuImages,
+    title: 'Detailed product pages',
+    text: 'Swipeable gallery with zoom, stock status, shipping and return details, reviews and related products.',
+  },
+  {
+    icon: LuPackagePlus,
+    title: 'Frequently bought together',
+    text: 'Each product suggests items that go with it, with a combined price and one button to add them all.',
+  },
+  {
+    icon: LuShoppingCart,
+    title: 'Mini cart',
+    text: 'Hover over or tab to the cart icon to preview your items, subtotal and savings without leaving the page.',
   },
   {
     icon: LuShoppingBag,
