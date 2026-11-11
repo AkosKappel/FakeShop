@@ -11,7 +11,7 @@
 
 FakeShop is a demo online store: search and filter 194 products, save favourites, fill a cart and go through a full checkout. It looks real, but nothing is for sale: no payment is taken and nothing ships. Product data comes from the free [DummyJSON API](https://dummyjson.com/docs/products).
 
-**Live demo:** https://akoskappel.github.io/FakeShop/
+**Live demo:** https://fakeshop.akoskappel.dev/
 
 ![Home page](./screenshots/home.png)
 
@@ -59,16 +59,16 @@ pnpm install
 pnpm dev
 ```
 
-| Script            | What it does                                                    |
-| ----------------- | --------------------------------------------------------------- |
-| `pnpm dev`        | Start the development server on http://localhost:5173/FakeShop/ |
-| `pnpm lint`       | Lint the code with ESLint                                       |
-| `pnpm typecheck`  | Type-check the project                                          |
-| `pnpm test`       | Run the unit tests                                              |
-| `pnpm build`      | Type-check and build the static site into `dist`                |
-| `pnpm test:e2e`   | Run the end-to-end tests against the build                      |
-| `pnpm lighthouse` | Run Lighthouse on the build and check the score budget          |
-| `pnpm format`     | Format the code with Prettier (`format:check` only checks)      |
+| Script            | What it does                                               |
+| ----------------- | ---------------------------------------------------------- |
+| `pnpm dev`        | Start the development server on http://localhost:5173/     |
+| `pnpm lint`       | Lint the code with ESLint                                  |
+| `pnpm typecheck`  | Type-check the project                                     |
+| `pnpm test`       | Run the unit tests                                         |
+| `pnpm build`      | Type-check and build the static site into `dist`           |
+| `pnpm test:e2e`   | Run the end-to-end tests against the build                 |
+| `pnpm lighthouse` | Run Lighthouse on the build and check the score budget     |
+| `pnpm format`     | Format the code with Prettier (`format:check` only checks) |
 
 ## Testing
 

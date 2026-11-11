@@ -10,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:4174/FakeShop/',
+    baseURL: 'http://localhost:4174/',
     trace: 'retain-on-failure',
   },
   projects: [
@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'pnpm exec vite preview --port 4174 --strictPort',
-    url: 'http://localhost:4174/FakeShop/',
+    url: 'http://localhost:4174/',
     reuseExistingServer: !process.env.CI,
   },
 });

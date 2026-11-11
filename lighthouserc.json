@@ -4,11 +4,11 @@
       "startServerCommand": "pnpm exec vite preview --port 4175 --strictPort",
       "startServerReadyPattern": "Local",
       "url": [
-        "http://localhost:4175/FakeShop/",
-        "http://localhost:4175/FakeShop/products?q=phone",
-        "http://localhost:4175/FakeShop/products/1",
-        "http://localhost:4175/FakeShop/cart",
-        "http://localhost:4175/FakeShop/about"
+        "http://localhost:4175/",
+        "http://localhost:4175/products?q=phone",
+        "http://localhost:4175/products/1",
+        "http://localhost:4175/cart",
+        "http://localhost:4175/about"
       ],
       "numberOfRuns": 3,
       "settings": {
